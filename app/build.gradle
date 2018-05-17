@@ -1,0 +1,145 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'jacoco'
+
+def SDK_VERSION = 27
+
+android {
+    compileSdkVersion SDK_VERSION
+
+    defaultConfig {
+        applicationId "io.github.gianpamx.splitter"
+        minSdkVersion 19
+        targetSdkVersion SDK_VERSION
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "io.github.gianpamx.splitter.CustomTestRunner"
+    }
+    buildTypes {
+        debug {
+            testCoverageEnabled !project.hasProperty('android.injected.invoked.from.ide')
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+dependencies {
+    def daggerVersion = '2.14.1'
+    def archCompVersion = '1.1.1'
+    def roomVersion = '1.1.0'
+    def mockitoKotlinVersion = '1.5.0'
+    def glideVersion = '4.6.1'
+    def retrofitVersion = '2.3.0'
+    def supportVersion = "27.1.1"
+    def runnerVersion = "1.0.2"
+
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    implementation "com.android.support:appcompat-v7:$supportVersion"
+    implementation "com.android.support:design:$supportVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+
+    implementation "android.arch.lifecycle:extensions:$archCompVersion"
+    kapt "android.arch.lifecycle:compiler:$archCompVersion"
+
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion"
+
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    kapt "com.github.bumptech.glide:annotations:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
+    testImplementation "junit:junit:4.12"
+    testImplementation "android.arch.core:core-testing:$archCompVersion"
+    testImplementation "android.arch.persistence.room:testing:$roomVersion"
+    testImplementation "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion"
+    testImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    androidTestImplementation 'org.mockito:mockito-android:2.13.0'
+    androidTestImplementation "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion"
+    androidTestImplementation "com.android.support.test:rules:$runnerVersion"
+    androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
+    androidTestImplementation "android.arch.core:core-testing:$archCompVersion"
+    androidTestImplementation('com.schibsted.spain:barista:2.3.0') {
+        exclude group: 'com.android.support'
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    kaptAndroidTest "com.google.dagger:dagger-android-processor:$daggerVersion"
+}
+
+task fullCoverageReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = [
+            '**/*Test*.*',
+            '**/AutoValue_*.*',
+            '**/*JavascriptBridge.class',
+            '**/R.class',
+            '**/R$*.class',
+            '**/Manifest*.*',
+            'android/**/*.*',
+            '**/BuildConfig.*',
+            '**/*$ViewBinder*.*',
+            '**/*$ViewInjector*.*',
+            '**/Lambda$*.class',
+            '**/Lambda.class',
+            '**/*Lambda.class',
+            '**/*Lambda*.class',
+            '**/*$InjectAdapter.class',
+            '**/*$ModuleAdapter.class',
+            '**/*$ViewInjector*.class',
+            '**/*_Impl*',
+            '**/Dagger*Component*',
+            '**/Dagger*Impl*',
+            '**/Dagger*Builder*',
+            '**/*_MembersInjector.class', //Dagger2 generated code
+            '*/*_MembersInjector*.*', //Dagger2 generated code
+            '**/*_*Factory*.*', //Dagger2 generated code
+            '*/*Component*.*', //Dagger2 generated code
+            '**/*Module*.*' //Dagger2 generated code
+    ]
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree, kotlinDebugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "outputs/code-coverage/connected/*coverage.ec",
+            "jacoco/testDebugUnitTest.exec"
+    ])
+}
