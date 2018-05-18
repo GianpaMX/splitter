@@ -1,6 +1,10 @@
 package io.github.gianpamx.splitter.expense
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.whenever
+import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.SavePayerUseCase
 import org.hamcrest.collection.IsIn
 import org.junit.Assert.assertThat
@@ -28,11 +32,16 @@ class ExpenseViewModelTest {
     }
 
     @Test
-    fun empty() {
+    fun saveNewPlayer() {
         val expectedPayer = PayerModel()
+        with(argumentCaptor<(List<Payer>) -> Unit>()) {
+            whenever(savePayerUseCase.invoke(any(), capture(), any())).then {
+                firstValue.invoke(listOf(Payer()))
+            }
+        }
 
         expenseViewModel.save(expectedPayer)
 
-        assertThat(expectedPayer, IsIn(expenseViewModel.payers.value))
+        assertThat(expectedPayer, IsIn(expenseViewModel.payers.value!!))
     }
 }

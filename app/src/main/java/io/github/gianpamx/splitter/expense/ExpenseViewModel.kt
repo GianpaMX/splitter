@@ -23,7 +23,7 @@ class ExpenseViewModel @Inject constructor(private val savePayerUseCase: SavePay
 private fun Payer.toPayModel() = PayerModel(
         id = id,
         name = name,
-        amount = (cents / 100).toString()
+        amount = cents.toAmount()
 )
 
 private fun PayerModel.toPayer() = Payer(
@@ -37,3 +37,5 @@ private fun String.toCents() = try {
 } catch (t: Throwable) {
     0
 }
+
+private fun Int.toAmount() = if (this > 0) (this / 100).toString() else ""
