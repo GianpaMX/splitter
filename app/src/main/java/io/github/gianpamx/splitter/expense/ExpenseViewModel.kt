@@ -38,4 +38,4 @@ private fun String.toCents() = try {
     0
 }
 
-private fun Int.toAmount() = if (this > 0) (this / 100).toString() else ""
+private fun Int.toAmount() = if (this > 0) (this.toFloat() / 100f).toString() else ""

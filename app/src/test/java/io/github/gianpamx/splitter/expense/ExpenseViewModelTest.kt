@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.SavePayerUseCase
 import org.hamcrest.collection.IsIn
+import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -33,15 +34,28 @@ class ExpenseViewModelTest {
 
     @Test
     fun saveNewPlayer() {
-        val expectedPayer = PayerModel()
+        val expectedPayer = PayerModel(name = "ANY_NAME", amount = "123.45")
         with(argumentCaptor<(List<Payer>) -> Unit>()) {
             whenever(savePayerUseCase.invoke(any(), capture(), any())).then {
-                firstValue.invoke(listOf(Payer()))
+                firstValue.invoke(listOf(Payer(name = "ANY_NAME", cents = 12345)))
             }
         }
 
         expenseViewModel.save(expectedPayer)
 
         assertThat(expectedPayer, IsIn(expenseViewModel.payers.value!!))
+    }
+
+    @Test
+    fun errorSavingAPayer() {
+        with(argumentCaptor<(Exception) -> Unit>()) {
+            whenever(savePayerUseCase.invoke(any(), any(), capture())).then {
+                firstValue.invoke(Exception("ANY EXCEPTION"))
+            }
+        }
+
+        expenseViewModel.save(PayerModel())
+
+        assertThat(expenseViewModel.error.value, IsInstanceOf(Exception::class.java))
     }
 }
