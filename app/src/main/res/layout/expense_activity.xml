@@ -63,12 +63,12 @@
             <android.support.design.widget.TabItem
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Who paid?" />
+                android:text="@string/expense_activity_tab_payers_title" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="For who?" />
+                android:text="@string/expense_activity_tab_receivers_title" />
 
 
         </android.support.design.widget.TabLayout>
@@ -76,6 +76,7 @@
 
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

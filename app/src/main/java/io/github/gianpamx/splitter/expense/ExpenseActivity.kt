@@ -1,12 +1,15 @@
 package io.github.gianpamx.splitter.expense
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import kotlinx.android.synthetic.main.expense_activity.*
+import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
@@ -14,6 +17,8 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
     lateinit var factory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ExpenseViewModel;
+
+    private val payersAdapter = PayersAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -26,16 +31,27 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
 
         floatingActionButton.setOnClickListener {
-            val payerDialog = PayerDialog()
+            val payerDialog = PayerDialog.newInstance(PayerModel())
             payerDialog.show(supportFragmentManager, "DIALOG")
         }
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = payersAdapter
+
+        viewModel.payers.observe(this, Observer {
+            it?.let {
+                payersAdapter.replacePayers(it)
+            }
+        })
     }
 
     override fun onSave(payerModel: PayerModel) {
-        viewModel.save(payerModel)
+        launch {
+            viewModel.save(payerModel)
+        }
     }
 
     override fun onCancel() {
-
+        // Do nothing
     }
 }

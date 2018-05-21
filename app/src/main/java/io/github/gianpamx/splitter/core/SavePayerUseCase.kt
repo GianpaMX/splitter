@@ -1,9 +1,14 @@
 package io.github.gianpamx.splitter.core
 
-interface SavePayerUseCase : (Payer, (List<Payer>) -> Unit, (Exception) -> Unit) -> Unit
+import kotlinx.coroutines.experimental.delay
 
-class SavePayerUseCaseImpl : SavePayerUseCase {
-    override fun invoke(payer: Payer, success: (List<Payer>) -> Unit, failure: (Exception) -> Unit) {
-        success.invoke(listOf(payer))
+interface SavePayerUseCase {
+    suspend fun invoke(player: Payer): List<Payer>
+}
+
+class SavePayerUseCaseImpl() : SavePayerUseCase {
+    override suspend fun invoke(payer: Payer): List<Payer> {
+        delay(5_000)
+        return listOf(payer)
     }
 }

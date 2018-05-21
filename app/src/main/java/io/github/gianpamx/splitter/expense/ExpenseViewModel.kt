@@ -11,12 +11,15 @@ class ExpenseViewModel @Inject constructor(private val savePayerUseCase: SavePay
     val payers = MutableLiveData<List<PayerModel>>()
     val error = MutableLiveData<Exception>()
 
-    fun save(payerModel: PayerModel) {
-        savePayerUseCase.invoke(payerModel.toPayer(), {
-            payers.postValue(it.map { it.toPayModel() })
-        }, {
-            error.postValue(it)
-        })
+    suspend fun save(payerModel: PayerModel) {
+        try {
+            val payers = savePayerUseCase.invoke(payerModel.toPayer())
+            this.payers.postValue(payers.map {
+                it.toPayModel()
+            })
+        } catch (e: Exception) {
+            error.postValue(e)
+        }
     }
 }
 
@@ -38,4 +41,4 @@ private fun String.toCents() = try {
     0
 }
 
-private fun Int.toAmount() = if (this > 0) (this.toFloat() / 100f).toString() else ""
+private fun Int.toAmount() = if (this > 0) "$ ${this.toFloat() / 100f}" else ""
