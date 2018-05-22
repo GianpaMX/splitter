@@ -49,8 +49,8 @@ class PayerDialog : DialogFragment() {
             .setView(view)
             .setPositiveButton(R.string.expense_payer_dialog_save_button, { _, _ ->
                 payerModel?.apply {
-                    name = view.findViewById<EditText>(R.id.nameEditText)?.text.toString() ?: ""
-                    amount = view.findViewById<EditText>(R.id.amountEditText)?.text.toString() ?: ""
+                    name = view.findViewById<EditText>(R.id.nameEditText)?.text.toString()
+                    amount = view.findViewById<EditText>(R.id.amountEditText)?.text.toString()
                     listener?.onSave(this)
                 }
             })

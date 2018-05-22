@@ -6,7 +6,6 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import io.github.gianpamx.splitter.data.MockModule
 import io.github.gianpamx.splitter.expense.ExpenseActivityTest
-import io.github.gianpamx.splitter.core.CoreModule
 import javax.inject.Singleton
 
 
@@ -14,8 +13,6 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidInjectionModule::class,
     AppModule::class,
-    Binder::class,
-    CoreModule::class,
     MockModule::class
 ])
 interface TestAppComponent {

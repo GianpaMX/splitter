@@ -4,14 +4,15 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
-import io.github.gianpamx.splitter.core.CoreModule
+import io.github.gianpamx.splitter.gateway.room.RoomModule
 import javax.inject.Singleton
 
 
 @Singleton
 @Component(modules = [
     AndroidInjectionModule::class,
-    AppModule::class
+    AppModule::class,
+    RoomModule::class
 ])
 interface AppComponent {
     @Component.Builder

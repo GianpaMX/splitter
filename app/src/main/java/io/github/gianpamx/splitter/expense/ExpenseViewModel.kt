@@ -11,7 +11,7 @@ class ExpenseViewModel @Inject constructor(private val savePayerUseCase: SavePay
     val payers = MutableLiveData<List<PayerModel>>()
     val error = MutableLiveData<Exception>()
 
-    suspend fun save(payerModel: PayerModel) {
+    fun save(payerModel: PayerModel) {
         try {
             val payers = savePayerUseCase.invoke(payerModel.toPayer())
             this.payers.postValue(payers.map {

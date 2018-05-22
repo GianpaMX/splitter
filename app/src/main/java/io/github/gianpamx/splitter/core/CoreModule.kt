@@ -7,5 +7,5 @@ import dagger.Provides
 @Module
 class CoreModule {
     @Provides
-    fun provideSavePayerUseCase(): SavePayerUseCase = SavePayerUseCaseImpl()
+    fun provideSavePayerUseCase(persistenceGateway: PersistenceGateway): SavePayerUseCase = SavePayerUseCaseImpl(persistenceGateway)
 }
