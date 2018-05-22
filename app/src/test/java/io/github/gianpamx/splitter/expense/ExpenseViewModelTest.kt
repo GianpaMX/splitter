@@ -1,10 +1,7 @@
 package io.github.gianpamx.splitter.expense
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.github.gianpamx.splitter.core.ObservePayersUseCase
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.SavePayerUseCase
@@ -39,12 +36,12 @@ class ExpenseViewModelTest {
 
     @Test
     fun saveNewPayer() {
-        val expectedPayer = PayerModel(name = "ANY_NAME", amount = "$ 123.45")
+        val expectedPayer = PayerModel(name = "ANY_NAME", amount = "123.45")
         whenever(savePayerUseCase.invoke(any())).thenReturn(listOf(Payer(name = "ANY_NAME", cents = 12345)))
 
         expenseViewModel.save(expectedPayer)
 
-        assertThat(expectedPayer, IsIn(expenseViewModel.payers.value!!))
+        verify(savePayerUseCase).invoke(eq(Payer(name = "ANY_NAME", cents = 12345)))
     }
 
     @Test

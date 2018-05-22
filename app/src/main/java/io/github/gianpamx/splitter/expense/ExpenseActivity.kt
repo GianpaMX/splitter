@@ -30,19 +30,21 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
 
         tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
 
-        floatingActionButton.setOnClickListener {
-            val payerDialog = PayerDialog.newInstance(PayerModel())
-            payerDialog.show(supportFragmentManager, "DIALOG")
-        }
+        floatingActionButton.setOnClickListener { showPayerDialog(PayerModel()) }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = payersAdapter
 
         viewModel.payers.observe(this, Observer {
-            it?.let {
-                payersAdapter.replacePayers(it)
-            }
+            it?.let { payersAdapter.replacePayers(it) }
         })
+
+        payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
+    }
+
+    private fun showPayerDialog(payerModel: PayerModel) {
+        val payerDialog = PayerDialog.newInstance(payerModel)
+        payerDialog.show(supportFragmentManager, "DIALOG")
     }
 
     override fun onSave(payerModel: PayerModel) {

@@ -11,6 +11,14 @@ import kotlinx.android.synthetic.main.expense_payer_item.view.*
 class PayersAdapter : RecyclerView.Adapter<PayersAdapter.ViewHolder>() {
     private val differ = AsyncListDiffer<PayerModel>(this, NewCallback())
 
+    var onPayerSelectedListener: ((PayerModel) -> Unit)? = null
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int) = differ.currentList[position].id
+
     override fun getItemCount() = differ.currentList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
@@ -23,7 +31,16 @@ class PayersAdapter : RecyclerView.Adapter<PayersAdapter.ViewHolder>() {
         differ.submitList(payers)
     }
 
-    class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.expense_payer_item, parent, false)) {
+    inner class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.expense_payer_item, parent, false)) {
+        init {
+            itemView.setOnClickListener {
+                onPayerSelectedListener?.invoke(
+                        differ.currentList[adapterPosition]
+                                .copy() // Never leak a reference outside of this adapter
+                )
+            }
+        }
+
         fun bind(payer: PayerModel) {
             with(itemView) {
                 nameTextView.text = payer.name

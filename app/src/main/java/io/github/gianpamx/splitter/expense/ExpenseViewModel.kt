@@ -23,8 +23,7 @@ class ExpenseViewModel @Inject constructor(
 
     fun save(payerModel: PayerModel) {
         try {
-            val payers = savePayerUseCase.invoke(payerModel.toPayer())
-            this.payers.postValue(payers.map { it.toPayerModel() })
+            savePayerUseCase.invoke(payerModel.toPayer())
         } catch (e: Exception) {
             error.postValue(e)
         }
@@ -49,4 +48,4 @@ private fun String.toCents() = try {
     0
 }
 
-private fun Int.toAmount() = if (this > 0) "$ ${this.toFloat() / 100f}" else ""
+private fun Int.toAmount() = if (this > 0) "${this.toFloat() / 100f}" else ""
