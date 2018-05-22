@@ -3,16 +3,34 @@ package io.github.gianpamx.splitter.gateway.room
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.PersistenceGateway
 
-class RoomPersistence : PersistenceGateway {
+class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
     override fun create(payer: Payer) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        databaseDao.insert(payer.toPayerDBModel())
     }
 
-    override fun findAllPayers(): List<Payer> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun findAllPayers() = databaseDao.retriveAllPayers().map { it.toPayer() }
+
+    override fun update(payer: Payer) {
+        databaseDao.update(payer.toPayerDBModel())
     }
 
-    override fun update(any: Payer) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun observePayers(observer: (List<Payer>) -> Unit) {
+        databaseDao
+                .allPayers()
+                .subscribe {
+                    observer.invoke(it.map { it.toPayer() })
+                }
     }
 }
+
+private fun PayerDBModel.toPayer() = Payer(
+        id = id,
+        name = name,
+        cents = cents
+)
+
+private fun Payer.toPayerDBModel() = PayerDBModel(
+        id = id,
+        name = name,
+        cents = cents
+)

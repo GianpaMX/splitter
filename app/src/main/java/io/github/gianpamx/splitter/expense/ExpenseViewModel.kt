@@ -2,28 +2,36 @@ package io.github.gianpamx.splitter.expense
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.github.gianpamx.splitter.core.ObservePayersUseCase
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.SavePayerUseCase
 import javax.inject.Inject
 import kotlin.math.truncate
 
-class ExpenseViewModel @Inject constructor(private val savePayerUseCase: SavePayerUseCase) : ViewModel() {
+class ExpenseViewModel @Inject constructor(
+        private val savePayerUseCase: SavePayerUseCase,
+        observePayersUseCase: ObservePayersUseCase) : ViewModel() {
+
     val payers = MutableLiveData<List<PayerModel>>()
     val error = MutableLiveData<Exception>()
+
+    init {
+        observePayersUseCase.invoke {
+            payers.postValue(it.map { it.toPayerModel() })
+        }
+    }
 
     fun save(payerModel: PayerModel) {
         try {
             val payers = savePayerUseCase.invoke(payerModel.toPayer())
-            this.payers.postValue(payers.map {
-                it.toPayModel()
-            })
+            this.payers.postValue(payers.map { it.toPayerModel() })
         } catch (e: Exception) {
             error.postValue(e)
         }
     }
 }
 
-private fun Payer.toPayModel() = PayerModel(
+private fun Payer.toPayerModel() = PayerModel(
         id = id,
         name = name,
         amount = cents.toAmount()
