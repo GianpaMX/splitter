@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import dagger.android.AndroidInjection
@@ -12,13 +13,21 @@ import kotlinx.android.synthetic.main.expense_activity.*
 import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
+private const val SELECTED_TAB = "SELECTED_TAB"
+
+private const val DEFAULT_SELECTED_TAB = 0
+
 class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ExpenseViewModel;
 
+    private var selectedTab: Int = DEFAULT_SELECTED_TAB
+
     private val payersAdapter = PayersAdapter()
+
+    private val receiversAdapter = ReceiversAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -28,18 +37,52 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         setContentView(R.layout.expense_activity)
         setSupportActionBar(toolbar)
 
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        if (savedInstanceState != null) {
+            selectedTab = savedInstanceState.getInt(SELECTED_TAB, DEFAULT_SELECTED_TAB)
+            tabLayout.getTabAt(selectedTab)?.select()
+        }
+        onTabSelected(selectedTab)
+
         tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
+        tabLayout.addOnTabSelectedListener(onTabSelectedListener)
 
         floatingActionButton.setOnClickListener { showPayerDialog(PayerModel()) }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = payersAdapter
 
         viewModel.payers.observe(this, Observer {
             it?.let { payersAdapter.replacePayers(it) }
         })
 
         payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        outState?.putInt(SELECTED_TAB, selectedTab)
+    }
+
+    private val onTabSelectedListener = object : TabLayout.OnTabSelectedListener {
+        override fun onTabReselected(tab: TabLayout.Tab?) {
+            // Do nothing
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab?) {
+            // Do nothing
+        }
+
+        override fun onTabSelected(tab: TabLayout.Tab?) {
+            tab?.apply { onTabSelected(position) }
+        }
+    }
+
+    private fun onTabSelected(position: Int) {
+        selectedTab = position
+        when (position) {
+            0 -> recyclerView.adapter = payersAdapter
+            1 -> recyclerView.adapter = receiversAdapter
+        }
     }
 
     private fun showPayerDialog(payerModel: PayerModel) {
