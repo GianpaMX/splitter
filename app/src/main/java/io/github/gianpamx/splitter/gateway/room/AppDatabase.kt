@@ -2,12 +2,17 @@ package io.github.gianpamx.splitter.gateway.room
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
-import io.github.gianpamx.splitter.gateway.room.DatabaseDao
-import io.github.gianpamx.splitter.gateway.room.PayerDBModel
+import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
+import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
+import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
+import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
 
 @Database(
         entities = [
-            PayerDBModel::class
+            PersonDBModel::class,
+            ExpenseDBModel::class,
+            PaymentDBModel::class,
+            ReceiverDBModel::class
         ],
         version = 1,
         exportSchema = false)

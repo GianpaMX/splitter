@@ -1,10 +1,14 @@
 package io.github.gianpamx.splitter.expense
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import io.github.gianpamx.splitter.core.ObservePayersUseCase
-import io.github.gianpamx.splitter.core.Payer
-import io.github.gianpamx.splitter.core.SavePayerUseCase
+import io.github.gianpamx.splitter.core.Payment
+import io.github.gianpamx.splitter.core.Person
+import io.github.gianpamx.splitter.core.SavePaymentUseCase
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert.assertThat
@@ -15,6 +19,8 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
+private const val anyExpenseId = 1L
+
 @RunWith(MockitoJUnitRunner::class)
 class ExpenseViewModelTest {
     @Rule
@@ -22,7 +28,7 @@ class ExpenseViewModelTest {
     val instantExecutor = InstantTaskExecutorRule()
 
     @Mock
-    private lateinit var savePayerUseCase: SavePayerUseCase
+    private lateinit var savePaymentUseCase: SavePaymentUseCase
 
     @Mock
     private lateinit var observePayersUseCase: ObservePayersUseCase
@@ -31,35 +37,37 @@ class ExpenseViewModelTest {
 
     @Before
     fun setUp() {
-        expenseViewModel = ExpenseViewModel(savePayerUseCase, observePayersUseCase)
+        expenseViewModel = ExpenseViewModel(savePaymentUseCase, observePayersUseCase)
     }
 
     @Test
     fun saveNewPayer() {
         val expectedPayer = PayerModel(name = "ANY_NAME", amount = "123.45")
-        whenever(savePayerUseCase.invoke(any())).thenReturn(listOf(Payer(name = "ANY_NAME", cents = 12345)))
 
-        expenseViewModel.save(expectedPayer)
+        expenseViewModel.save(expectedPayer, anyExpenseId)
 
-        verify(savePayerUseCase).invoke(eq(Payer(name = "ANY_NAME", cents = 12345)))
+        verify(savePaymentUseCase).invoke(any(), any(), any())
     }
 
     @Test
     fun errorSavingAPayer() {
-        whenever(savePayerUseCase.invoke(any())).thenThrow(Exception("ANY_EXCEPTION"))
+        whenever(savePaymentUseCase.invoke(any(), any(), any())).thenThrow(Exception("ANY_EXCEPTION"))
 
-        expenseViewModel.save(PayerModel())
+        expenseViewModel.save(PayerModel(), anyExpenseId)
 
         assertThat(expenseViewModel.error.value, IsInstanceOf(Exception::class.java))
     }
 
     @Test
     fun onNewPayerInserted() {
-        argumentCaptor<(List<Payer>) -> Unit>().apply {
-            verify(observePayersUseCase).invoke(capture())
-            this.firstValue.invoke(listOf(Payer(id = 1)))
+        argumentCaptor<(List<Payment>) -> Unit>().apply {
+            whenever(observePayersUseCase.invoke(any(), capture())).then {
+                firstValue.invoke(listOf(Payment(expenseId = anyExpenseId, person = Person(id = 1), cents = 12345)))
+            }
         }
 
-        assertThat(PayerModel(id = 1), IsIn(expenseViewModel.payers.value!!))
+        expenseViewModel.observePayers(anyExpenseId)
+
+        assertThat(PayerModel(id = 1, amount = "123.45"), IsIn(expenseViewModel.payers.value!!))
     }
 }

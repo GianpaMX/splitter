@@ -55,6 +55,7 @@ dependencies {
     def retrofitVersion = '2.3.0'
     def supportVersion = "27.1.1"
     def runnerVersion = "1.0.2"
+    def coroutinesVersion = "0.22.5"
 
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -63,7 +64,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'

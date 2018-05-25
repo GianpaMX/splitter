@@ -1,18 +1,19 @@
 package io.github.gianpamx.splitter.gateway.room
 
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
-import io.github.gianpamx.splitter.core.Payer
+import com.nhaarman.mockito_kotlin.*
+import io.github.gianpamx.splitter.core.Payment
+import io.github.gianpamx.splitter.core.Person
+import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
+import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
 import io.reactivex.internal.operators.flowable.FlowableJust
-import org.hamcrest.collection.IsIn
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+
+private val anyPerson = Person(id = 1)
+private val anyPayment = Payment(cents = 12345, expenseId = 1, person = anyPerson)
 
 @RunWith(MockitoJUnitRunner::class)
 class RoomPersistenceTest {
@@ -29,38 +30,38 @@ class RoomPersistenceTest {
 
     @Test
     fun create() {
-        val expectedPayer = Payer(id = 1, name = "name", cents = 123)
 
-        roomPersistence.create(expectedPayer)
+        roomPersistence.createPayment(anyPayment)
 
-        verify(databaseDao).insert(eq(PayerDBModel(id = 1, name = "name", cents = 123)))
-    }
-
-    @Test
-    fun findAllPayers() {
-        whenever(databaseDao.retriveAllPayers()).thenReturn(listOf(PayerDBModel(id = 1)))
-
-        val allPayers = roomPersistence.findAllPayers()
-
-        assertThat(Payer(id = 1), IsIn(allPayers))
+        verify(databaseDao).insert(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
     }
 
     @Test
     fun update() {
-        val expectedPayer = Payer(id = 1, name = "name", cents = 123)
+        val expectedPayer = anyPayment
 
-        roomPersistence.update(expectedPayer)
+        roomPersistence.updatePayment(expectedPayer)
 
-        verify(databaseDao).update(eq(PayerDBModel(id = 1, name = "name", cents = 123)))
+        verify(databaseDao).update(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
     }
 
     @Test
     fun observePayers() {
-        val observer = mock<(List<Payer>) -> Unit>()
-        whenever(databaseDao.allPayers()).thenReturn(FlowableJust(listOf(PayerDBModel(id = 1))))
+        val observer = mock<(List<Payment>) -> Unit>()
+        whenever(databaseDao.findPerson(any())).thenReturn(PersonDBModel(id = anyPerson.id, name = anyPerson.name))
+        whenever(databaseDao.observePayments(any())).thenReturn(FlowableJust(listOf(PaymentDBModel(anyPayment.expenseId, anyPerson.id, 12345))))
 
-        roomPersistence.observePayers(observer)
+        roomPersistence.observePayments(anyPayment.expenseId, observer)
 
-        verify(observer).invoke(eq(listOf(Payer(id = 1))))
+        verify(observer).invoke(eq(listOf(anyPayment)))
+    }
+
+    @Test
+    fun deletePayment() {
+        whenever(databaseDao.findPayment(any(), any())).thenReturn(PaymentDBModel())
+
+        roomPersistence.deletePayment(anyPayment.expenseId, anyPerson.id)
+
+        verify(databaseDao).deletePayment(any())
     }
 }

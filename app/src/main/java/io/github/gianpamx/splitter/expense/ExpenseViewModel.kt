@@ -2,44 +2,47 @@ package io.github.gianpamx.splitter.expense
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.github.gianpamx.splitter.core.ObservePayersUseCase
-import io.github.gianpamx.splitter.core.Payer
-import io.github.gianpamx.splitter.core.SavePayerUseCase
+import io.github.gianpamx.splitter.core.*
 import javax.inject.Inject
 import kotlin.math.truncate
 
 class ExpenseViewModel @Inject constructor(
-        private val savePayerUseCase: SavePayerUseCase,
-        observePayersUseCase: ObservePayersUseCase) : ViewModel() {
+        private val savePaymentUseCase: SavePaymentUseCase,
+        private val observePayersUseCase: ObservePayersUseCase) : ViewModel() {
 
     val payers = MutableLiveData<List<PayerModel>>()
     val error = MutableLiveData<Exception>()
 
-    init {
-        observePayersUseCase.invoke {
+    fun observePayers(expenseId: Long) {
+        observePayersUseCase.invoke(expenseId) {
             payers.postValue(it.map { it.toPayerModel() })
         }
     }
 
-    fun save(payerModel: PayerModel) {
+    fun save(payerModel: PayerModel, expenseId: Long) {
         try {
-            savePayerUseCase.invoke(payerModel.toPayer())
+            savePaymentUseCase.invoke(payerModel.amount.toCents(), payerModel.toPerson(), expenseId)
         } catch (e: Exception) {
             error.postValue(e)
         }
     }
 }
 
-private fun Payer.toPayerModel() = PayerModel(
+private fun Expense.toExpenseModel() = ExpenseModel(
         id = id,
-        name = name,
+        title = title,
+        description = description
+)
+
+private fun Payment.toPayerModel() = PayerModel(
+        id = person.id,
+        name = person.name,
         amount = cents.toAmount()
 )
 
-private fun PayerModel.toPayer() = Payer(
+private fun PayerModel.toPerson() = Person(
         id = id,
-        name = name,
-        cents = amount.toCents()
+        name = name
 )
 
 private fun String.toCents() = try {

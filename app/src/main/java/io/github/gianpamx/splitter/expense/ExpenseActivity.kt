@@ -3,6 +3,8 @@ package io.github.gianpamx.splitter.expense
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
@@ -17,17 +19,29 @@ private const val SELECTED_TAB = "SELECTED_TAB"
 
 private const val DEFAULT_SELECTED_TAB = 0
 
+private const val EXPENSE = "EXPENSE"
+
 class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ExpenseViewModel;
+    private lateinit var viewModel: ExpenseViewModel
+
+    private lateinit var expense: ExpenseModel
 
     private var selectedTab: Int = DEFAULT_SELECTED_TAB
 
     private val payersAdapter = PayersAdapter()
 
     private val receiversAdapter = ReceiversAdapter()
+
+    companion object {
+        fun newIntent(expense: ExpenseModel, context: Context): Intent {
+            val intent = Intent(context, ExpenseActivity::class.java)
+            intent.putExtra(EXPENSE, expense)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -38,6 +52,9 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         setSupportActionBar(toolbar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        expense = intent.getParcelableExtra(EXPENSE)
+        viewModel.observePayers(expense.id)
 
         if (savedInstanceState != null) {
             selectedTab = savedInstanceState.getInt(SELECTED_TAB, DEFAULT_SELECTED_TAB)
@@ -92,7 +109,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
 
     override fun onSave(payerModel: PayerModel) {
         launch {
-            viewModel.save(payerModel)
+            viewModel.save(payerModel, expense.id)
         }
     }
 
