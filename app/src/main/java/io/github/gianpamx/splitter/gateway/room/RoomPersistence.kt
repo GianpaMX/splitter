@@ -1,12 +1,11 @@
 package io.github.gianpamx.splitter.gateway.room
 
-import io.github.gianpamx.splitter.core.Expense
-import io.github.gianpamx.splitter.core.Payment
-import io.github.gianpamx.splitter.core.PersistenceGateway
-import io.github.gianpamx.splitter.core.Person
+import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
+import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
+import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
 
@@ -36,10 +35,10 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
         return null
     }
 
-    override fun observePayments(expenseId: Long, observer: (List<Payment>) -> Unit) {
+    override fun observePayments(expenseId: Long, observer: (List<Payer>) -> Unit) {
         databaseDao.observePayments(expenseId).subscribe {
             observer.invoke(it.map {
-                it.toPayment(databaseDao.findPerson(it.personId).toPerson())
+                it.toPayer()
             })
         }
     }
@@ -50,23 +49,32 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
         expense.id = databaseDao.insert(expense.toExpenseDBModel())
         return expense
     }
+
+
+    override fun observeReceivers(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit) {
+        databaseDao.observeReceivers(expenseId).subscribe {
+            observer.invoke(it.map {
+                Pair(it.toPerson(), it.checked == TRUE)
+            })
+        }
+    }
 }
+
+private fun ReceiverDBView.toPerson() = Person(
+        id = personId,
+        name = name
+)
+
+private fun PayerDBView.toPayer() = Payer(
+        personId = personId,
+        name = name,
+        cents = cents
+)
 
 private fun Expense.toExpenseDBModel() = ExpenseDBModel(
         id = id,
         title = title,
         description = description
-)
-
-private fun ExpenseDBModel.toExpense() = Expense(
-        id = id,
-        title = title,
-        description = description
-)
-
-private fun PersonDBModel.toPerson() = Person(
-        id = id,
-        name = name
 )
 
 private fun PaymentDBModel.toPayment(person: Person) = Payment(

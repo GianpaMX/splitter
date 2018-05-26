@@ -12,4 +12,5 @@
     <string name="expense_payer_item_avatar">Payer avatar</string>
     <string name="expense_activity_tab_payers_title">Who paid?</string>
     <string name="expense_activity_tab_receivers_title">For who?</string>
+    <string name="expense_receiver_name_hint">Name</string>
 </resources>

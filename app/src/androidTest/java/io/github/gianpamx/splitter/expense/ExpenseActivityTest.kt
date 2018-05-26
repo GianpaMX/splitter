@@ -31,6 +31,8 @@ class ExpenseActivityTest {
 
     @Test
     fun empty() {
-        activityTestRule.launchActivity(Intent())
+        val intent = Intent()
+        intent.putExtra("EXPENSE", ExpenseModel())
+        activityTestRule.launchActivity(intent)
     }
 }

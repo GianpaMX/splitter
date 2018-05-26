@@ -12,11 +12,11 @@ class ObservePayersUseCaseImplTest {
     private lateinit var persistenceGateway: PersistenceGateway
 
     @Test
-    fun empty() {
-        val observer = mock<(List<Payment>) -> Unit>()
-        argumentCaptor<(List<Payment>) -> Unit>().apply {
+    fun listOfPayers() {
+        val observer = mock<(List<Payer>) -> Unit>()
+        argumentCaptor<(List<Payer>) -> Unit>().apply {
             whenever(persistenceGateway.observePayments(any(), capture())).then {
-                firstValue.invoke(listOf(Payment()))
+                firstValue.invoke(listOf(Payer()))
             }
         }
         val observePayersUseCaseImpl = ObservePayersUseCaseImpl(persistenceGateway)

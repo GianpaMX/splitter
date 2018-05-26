@@ -1,10 +1,12 @@
 package io.github.gianpamx.splitter.gateway.room
 
 import com.nhaarman.mockito_kotlin.*
+import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.Payment
 import io.github.gianpamx.splitter.core.Person
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
-import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
+import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
+import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
 import io.reactivex.internal.operators.flowable.FlowableJust
 import org.junit.Before
 import org.junit.Test
@@ -47,13 +49,22 @@ class RoomPersistenceTest {
 
     @Test
     fun observePayers() {
-        val observer = mock<(List<Payment>) -> Unit>()
-        whenever(databaseDao.findPerson(any())).thenReturn(PersonDBModel(id = anyPerson.id, name = anyPerson.name))
-        whenever(databaseDao.observePayments(any())).thenReturn(FlowableJust(listOf(PaymentDBModel(anyPayment.expenseId, anyPerson.id, 12345))))
+        val observer = mock<(List<Payer>) -> Unit>()
+        whenever(databaseDao.observePayments(any())).thenReturn(FlowableJust(listOf(PayerDBView(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
 
         roomPersistence.observePayments(anyPayment.expenseId, observer)
 
-        verify(observer).invoke(eq(listOf(anyPayment)))
+        verify(observer).invoke(eq(listOf(Payer(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
+    }
+
+    @Test
+    fun observeReceivers() {
+        val observer = mock<(List<Pair<Person, Boolean>>) -> Unit>()
+        whenever(databaseDao.observeReceivers(any())).thenReturn(FlowableJust(listOf(ReceiverDBView(personId = anyPerson.id, name = anyPerson.name, checked = FALSE))))
+
+        roomPersistence.observeReceivers(anyPayment.expenseId, observer)
+
+        verify(observer).invoke(eq(listOf(Pair(Person(id = anyPerson.id, name = anyPerson.name), false))))
     }
 
     @Test

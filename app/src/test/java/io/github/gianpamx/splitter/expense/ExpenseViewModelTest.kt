@@ -6,8 +6,8 @@ import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.github.gianpamx.splitter.core.ObservePayersUseCase
-import io.github.gianpamx.splitter.core.Payment
-import io.github.gianpamx.splitter.core.Person
+import io.github.gianpamx.splitter.core.ObserveReceiversUseCase
+import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.SavePaymentUseCase
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf
@@ -33,11 +33,14 @@ class ExpenseViewModelTest {
     @Mock
     private lateinit var observePayersUseCase: ObservePayersUseCase
 
+    @Mock
+    private lateinit var observeReceiversUseCase: ObserveReceiversUseCase
+
     private lateinit var expenseViewModel: ExpenseViewModel
 
     @Before
     fun setUp() {
-        expenseViewModel = ExpenseViewModel(savePaymentUseCase, observePayersUseCase)
+        expenseViewModel = ExpenseViewModel(savePaymentUseCase, observePayersUseCase, observeReceiversUseCase)
     }
 
     @Test
@@ -60,9 +63,9 @@ class ExpenseViewModelTest {
 
     @Test
     fun onNewPayerInserted() {
-        argumentCaptor<(List<Payment>) -> Unit>().apply {
+        argumentCaptor<(List<Payer>) -> Unit>().apply {
             whenever(observePayersUseCase.invoke(any(), capture())).then {
-                firstValue.invoke(listOf(Payment(expenseId = anyExpenseId, person = Person(id = 1), cents = 12345)))
+                firstValue.invoke(listOf(Payer(cents = 12345, personId = 1)))
             }
         }
 

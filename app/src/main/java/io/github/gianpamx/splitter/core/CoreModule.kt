@@ -15,6 +15,10 @@ class CoreModule {
             ObservePayersUseCaseImpl(persistenceGateway)
 
     @Provides
+    fun provideObserveReceiversUseCase(persistenceGateway: PersistenceGateway): ObserveReceiversUseCase =
+            ObserveReceiversUseCaseImpl(persistenceGateway)
+
+    @Provides
     fun proviceCreateExpenseUseCase(persistenceGateway: PersistenceGateway): CreateExpenseUseCase =
             CreateExpenseUseCaseImpl(persistenceGateway)
 }

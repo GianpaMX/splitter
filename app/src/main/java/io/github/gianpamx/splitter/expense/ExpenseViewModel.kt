@@ -8,14 +8,20 @@ import kotlin.math.truncate
 
 class ExpenseViewModel @Inject constructor(
         private val savePaymentUseCase: SavePaymentUseCase,
-        private val observePayersUseCase: ObservePayersUseCase) : ViewModel() {
+        private val observePayersUseCase: ObservePayersUseCase,
+        private val observeReceiversUseCase: ObserveReceiversUseCase) : ViewModel() {
 
     val payers = MutableLiveData<List<PayerModel>>()
+    val receivers = MutableLiveData<List<ReceiverModel>>()
     val error = MutableLiveData<Exception>()
 
     fun observePayers(expenseId: Long) {
         observePayersUseCase.invoke(expenseId) {
             payers.postValue(it.map { it.toPayerModel() })
+        }
+
+        observeReceiversUseCase.invoke(expenseId) {
+            receivers.postValue(it.map { it.toReceiverModel() })
         }
     }
 
@@ -28,15 +34,15 @@ class ExpenseViewModel @Inject constructor(
     }
 }
 
-private fun Expense.toExpenseModel() = ExpenseModel(
-        id = id,
-        title = title,
-        description = description
+private fun Pair<Person, Boolean>.toReceiverModel() = ReceiverModel(
+        first.id,
+        first.name,
+        second
 )
 
-private fun Payment.toPayerModel() = PayerModel(
-        id = person.id,
-        name = person.name,
+private fun Payer.toPayerModel() = PayerModel(
+        id = personId,
+        name = name,
         amount = cents.toAmount()
 )
 

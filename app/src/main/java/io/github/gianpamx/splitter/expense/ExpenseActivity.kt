@@ -17,11 +17,11 @@ import javax.inject.Inject
 
 private const val SELECTED_TAB = "SELECTED_TAB"
 
-private const val DEFAULT_SELECTED_TAB = 0
+private const val PAYERS_TAB = 0
 
 private const val EXPENSE = "EXPENSE"
 
-class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
+class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialog.Listener {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
@@ -29,7 +29,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
 
     private lateinit var expense: ExpenseModel
 
-    private var selectedTab: Int = DEFAULT_SELECTED_TAB
+    private var selectedTab: Int = PAYERS_TAB
 
     private val payersAdapter = PayersAdapter()
 
@@ -57,7 +57,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         viewModel.observePayers(expense.id)
 
         if (savedInstanceState != null) {
-            selectedTab = savedInstanceState.getInt(SELECTED_TAB, DEFAULT_SELECTED_TAB)
+            selectedTab = savedInstanceState.getInt(SELECTED_TAB, PAYERS_TAB)
             tabLayout.getTabAt(selectedTab)?.select()
         }
         onTabSelected(selectedTab)
@@ -65,10 +65,20 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
         tabLayout.addOnTabSelectedListener(onTabSelectedListener)
 
-        floatingActionButton.setOnClickListener { showPayerDialog(PayerModel()) }
+        floatingActionButton.setOnClickListener {
+            if (selectedTab == PAYERS_TAB) {
+                showPayerDialog(PayerModel())
+            } else {
+                showReceiverDialog(ReceiverModel(isChecked = true))
+            }
+        }
 
         viewModel.payers.observe(this, Observer {
             it?.let { payersAdapter.replacePayers(it) }
+        })
+
+        viewModel.receivers.observe(this, Observer {
+            it?.let { receiversAdapter.replaceReceivers(it) }
         })
 
         payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
@@ -107,10 +117,19 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener {
         payerDialog.show(supportFragmentManager, "DIALOG")
     }
 
+    private fun showReceiverDialog(receiverModel: ReceiverModel) {
+        val payerDialog = ReceiverDialog.newInstance(receiverModel)
+        payerDialog.show(supportFragmentManager, "DIALOG")
+    }
+
     override fun onSave(payerModel: PayerModel) {
         launch {
             viewModel.save(payerModel, expense.id)
         }
+    }
+
+    override fun onSave(receiverModel: ReceiverModel) {
+        // TODO
     }
 
     override fun onCancel() {
