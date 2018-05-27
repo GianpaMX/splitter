@@ -5,6 +5,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import io.github.gianpamx.splitter.core.CoreModule
+import java.text.NumberFormat
 import javax.inject.Singleton
 
 @Module(includes = [
@@ -15,4 +16,8 @@ class AppModule {
     @Provides
     @Singleton
     fun provideContext(application: Application): Context = application
+
+    @Provides
+    @Singleton
+    fun provideCurrencyFormat() = NumberFormat.getCurrencyInstance()
 }

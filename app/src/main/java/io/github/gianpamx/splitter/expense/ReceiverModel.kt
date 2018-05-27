@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class ReceiverModel(
         var id: Long = 0L,
         var name: String = "",
-        val isChecked: Boolean = false
+        var isChecked: Boolean = false
 ) : Parcelable

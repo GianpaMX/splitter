@@ -13,6 +13,7 @@ import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import kotlinx.android.synthetic.main.expense_activity.*
 import kotlinx.coroutines.experimental.launch
+import java.text.NumberFormat
 import javax.inject.Inject
 
 private const val SELECTED_TAB = "SELECTED_TAB"
@@ -25,13 +26,16 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     @Inject
     lateinit var factory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var currencyFormat: NumberFormat
+
     private lateinit var viewModel: ExpenseViewModel
 
     private lateinit var expense: ExpenseModel
 
     private var selectedTab: Int = PAYERS_TAB
 
-    private val payersAdapter = PayersAdapter()
+    private lateinit var payersAdapter: PayersAdapter
 
     private val receiversAdapter = ReceiversAdapter()
 
@@ -47,6 +51,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, factory).get(ExpenseViewModel::class.java)
+        payersAdapter = PayersAdapter(currencyFormat)
 
         setContentView(R.layout.expense_activity)
         setSupportActionBar(toolbar)
@@ -54,7 +59,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         expense = intent.getParcelableExtra(EXPENSE)
-        viewModel.observePayers(expense.id)
+        viewModel.observePayersAndReceivers(expense.id)
 
         if (savedInstanceState != null) {
             selectedTab = savedInstanceState.getInt(SELECTED_TAB, PAYERS_TAB)
@@ -73,15 +78,26 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
             }
         }
 
+        viewModel.total.observe(this, Observer {
+            it?.let { totalTextView.text = currencyFormat.format(it) }
+        })
+
         viewModel.payers.observe(this, Observer {
             it?.let { payersAdapter.replacePayers(it) }
         })
+        payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
 
         viewModel.receivers.observe(this, Observer {
             it?.let { receiversAdapter.replaceReceivers(it) }
         })
-
-        payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
+        receiversAdapter.onCheckedChangeListener = { receiverModel ->
+            launch {
+                viewModel.save(receiverModel, expense.id)
+            }
+        }
+        receiversAdapter.onLongClickListener = { receiverModel ->
+            showReceiverDialog(receiverModel)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

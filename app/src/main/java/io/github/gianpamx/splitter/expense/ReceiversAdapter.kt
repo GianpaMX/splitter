@@ -12,6 +12,9 @@ import kotlinx.android.synthetic.main.expense_receiver_item.view.*
 class ReceiversAdapter : RecyclerView.Adapter<ViewHolder>() {
     private val differ = AsyncListDiffer<ReceiverModel>(this, NewCallback())
 
+    var onCheckedChangeListener: ((ReceiverModel) -> Unit)? = null
+    var onLongClickListener: ((ReceiverModel) -> Unit)? = null
+
     init {
         setHasStableIds(true)
     }
@@ -31,6 +34,25 @@ class ReceiversAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     inner class ViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.expense_receiver_item, parent, false)) {
+        init {
+            with(itemView) {
+                receiverCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                    val receiverModel = differ.currentList[adapterPosition]
+                    receiverModel.isChecked = isChecked
+                    onCheckedChangeListener?.invoke(receiverModel.copy())
+                }
+
+                setOnClickListener {
+                    receiverCheckBox.isChecked = !receiverCheckBox.isChecked
+                }
+
+                setOnLongClickListener {
+                    onLongClickListener?.invoke(differ.currentList[adapterPosition].copy())
+                    return@setOnLongClickListener onLongClickListener != null
+                }
+            }
+        }
+
         fun bind(receiver: ReceiverModel) {
             with(itemView) {
                 nameTextView.text = receiver.name

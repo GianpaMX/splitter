@@ -3,14 +3,19 @@
 
     <string name="expense_title_hint">Title</string>
     <string name="expense_description_hint">Description</string>
+    <string name="expense_activity_tab_payers_title">Who paid?</string>
+    <string name="expense_activity_tab_receivers_title">For who?</string>
+
 
     <string name="expense_payer_dialog_save_button">Save</string>
     <string name="expense_payer_dialog_cancel_button">Cancel</string>
+    <string name="expense_payer_dialog_title">Who paid and how much?</string>
     <string name="expense_payer_name_hint">Name</string>
     <string name="expense_payer_amount_hint">Amount</string>
-    <string name="expense_payer_dialog_title">Who paid and how much?</string>
     <string name="expense_payer_item_avatar">Payer avatar</string>
-    <string name="expense_activity_tab_payers_title">Who paid?</string>
-    <string name="expense_activity_tab_receivers_title">For who?</string>
+
     <string name="expense_receiver_name_hint">Name</string>
+    <string name="expense_receiver_dialog_title">Who else?</string>
+    <string name="expense_receiver_dialog_save_button">Save</string>
+    <string name="expense_receiver_dialog_cancel_button">Cancel</string>
 </resources>

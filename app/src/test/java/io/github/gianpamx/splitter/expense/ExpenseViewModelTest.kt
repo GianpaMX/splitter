@@ -1,11 +1,9 @@
 package io.github.gianpamx.splitter.expense
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import io.github.gianpamx.splitter.core.*
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert.assertThat
@@ -45,11 +43,11 @@ class ExpenseViewModelTest {
 
     @Test
     fun saveNewPayer() {
-        val expectedPayer = PayerModel(name = "ANY_NAME", amount = "123.45")
+        val expectedPayer = PayerModel(name = "ANY_NAME", amount = 0.1 + 0.2)
 
         expenseViewModel.save(expectedPayer, anyExpenseId)
 
-        verify(savePaymentUseCase).invoke(any(), any(), any())
+        verify(savePaymentUseCase).invoke(eq(30), any(), any())
     }
 
     @Test
@@ -63,14 +61,27 @@ class ExpenseViewModelTest {
 
     @Test
     fun onNewPayerInserted() {
-        argumentCaptor<(List<Payer>) -> Unit>().apply {
+        argumentCaptor<(List<Payer>, Int) -> Unit>().apply {
             whenever(observePayersUseCase.invoke(any(), capture())).then {
-                firstValue.invoke(listOf(Payer(cents = 12345, personId = 1)))
+                firstValue.invoke(listOf(Payer(cents = 12345, personId = 1)), 12345)
             }
         }
 
-        expenseViewModel.observePayers(anyExpenseId)
+        expenseViewModel.observePayersAndReceivers(anyExpenseId)
 
-        assertThat(PayerModel(id = 1, amount = "123.45"), IsIn(expenseViewModel.payers.value!!))
+        assertThat(PayerModel(id = 1, amount = 123.45), IsIn(expenseViewModel.payers.value!!))
+    }
+
+    @Test
+    fun point1pluspoint2equalspoint3() {
+        argumentCaptor<(List<Payer>, Int) -> Unit>().apply {
+            whenever(observePayersUseCase.invoke(any(), capture())).then {
+                firstValue.invoke(listOf(Payer(cents = 10), Payer(cents = 20)), 30)
+            }
+        }
+
+        expenseViewModel.observePayersAndReceivers(anyExpenseId)
+
+        assertThat(expenseViewModel.total.value, equalTo(0.3))
     }
 }

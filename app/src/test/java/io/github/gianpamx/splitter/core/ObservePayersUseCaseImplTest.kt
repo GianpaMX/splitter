@@ -13,16 +13,16 @@ class ObservePayersUseCaseImplTest {
 
     @Test
     fun listOfPayers() {
-        val observer = mock<(List<Payer>) -> Unit>()
+        val observer = mock<(List<Payer>, Int) -> Unit>()
         argumentCaptor<(List<Payer>) -> Unit>().apply {
             whenever(persistenceGateway.observePayments(any(), capture())).then {
-                firstValue.invoke(listOf(Payer()))
+                firstValue.invoke(listOf(Payer(cents = 1), Payer(cents = 2)))
             }
         }
         val observePayersUseCaseImpl = ObservePayersUseCaseImpl(persistenceGateway)
 
         observePayersUseCaseImpl.invoke(1, observer)
 
-        verify(observer).invoke(any())
+        verify(observer).invoke(any(), eq(3))
     }
 }

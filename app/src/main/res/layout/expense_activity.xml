@@ -37,16 +37,13 @@
                     android:hint="@string/expense_title_hint"
                     android:inputType="textCapWords"
                     android:lines="1"
-                    android:maxLines="1"
-                    android:textSize="36sp" />
+                    android:maxLines="1" />
 
-                <EditText
-                    android:id="@+id/descriptionEditText"
+                <TextView
+                    android:id="@+id/totalTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/expense_description_hint"
-                    android:inputType="textMultiLine"
-                    android:maxLines="3" />
+                    tools:text="Total: $ 123,456.78" />
 
             </LinearLayout>
 

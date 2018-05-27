@@ -10,6 +10,7 @@ import android.widget.EditText
 import io.github.gianpamx.splitter.R
 
 private const val PAYER_MODEL = "PayerModel"
+private const val EMPTY_STRING = ""
 
 class PayerDialog : DialogFragment() {
     private var listener: Listener? = null
@@ -19,7 +20,9 @@ class PayerDialog : DialogFragment() {
     val view by lazy {
         (View.inflate(activity, R.layout.expense_payer_dialog, null) as ViewGroup).apply {
             findViewById<EditText>(R.id.nameEditText).setText(payerModel?.name)
-            findViewById<EditText>(R.id.amountEditText).setText(payerModel?.amount)
+            findViewById<EditText>(R.id.amountEditText).setText(with(payerModel?.amount) {
+                if (this != null && this > 0) toString() else EMPTY_STRING
+            })
         }
     }
 
@@ -53,7 +56,13 @@ class PayerDialog : DialogFragment() {
             .setPositiveButton(R.string.expense_payer_dialog_save_button, { _, _ ->
                 payerModel?.apply {
                     name = view.findViewById<EditText>(R.id.nameEditText).text.toString()
-                    amount = view.findViewById<EditText>(R.id.amountEditText).text.toString()
+                    amount = with(view.findViewById<EditText>(R.id.amountEditText).text.toString()) {
+                        if (isEmpty()) {
+                            0.0
+                        } else {
+                            toDouble()
+                        }
+                    }
                     listener?.onSave(this)
                 }
             })

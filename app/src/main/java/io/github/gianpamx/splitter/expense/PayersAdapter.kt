@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
 import kotlinx.android.synthetic.main.expense_payer_item.view.*
+import java.text.NumberFormat
 
-class PayersAdapter : RecyclerView.Adapter<PayersAdapter.ViewHolder>() {
+class PayersAdapter(private val currencyFormat: NumberFormat) : RecyclerView.Adapter<PayersAdapter.ViewHolder>() {
     private val differ = AsyncListDiffer<PayerModel>(this, NewCallback())
 
     var onPayerSelectedListener: ((PayerModel) -> Unit)? = null
@@ -44,7 +45,7 @@ class PayersAdapter : RecyclerView.Adapter<PayersAdapter.ViewHolder>() {
         fun bind(payer: PayerModel) {
             with(itemView) {
                 nameTextView.text = payer.name
-                amountTextView.text = payer.amount
+                amountTextView.text = if (payer.amount > 0.0) currencyFormat.format(payer.amount) else ""
             }
         }
     }

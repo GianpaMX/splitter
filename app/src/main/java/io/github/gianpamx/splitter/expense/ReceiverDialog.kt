@@ -47,15 +47,15 @@ class ReceiverDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(activity)
-            .setTitle("Person?")
+            .setTitle(R.string.expense_receiver_dialog_title)
             .setView(view)
-            .setPositiveButton("Save", { _, _ ->
+            .setPositiveButton(R.string.expense_receiver_dialog_save_button, { _, _ ->
                 receiverModel?.apply {
                     name = view.findViewById<EditText>(R.id.nameEditText).text.toString()
                     listener?.onSave(this)
                 }
             })
-            .setNegativeButton("Cancel", { _, _ ->
+            .setNegativeButton(R.string.expense_receiver_dialog_cancel_button, { _, _ ->
                 listener?.onCancel()
             })
             .create()

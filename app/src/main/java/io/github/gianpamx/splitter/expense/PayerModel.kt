@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class PayerModel(
         var id: Long = 0,
         var name: String = "",
-        var amount: String = ""
+        var amount: Double = 0.0
 ) : Parcelable

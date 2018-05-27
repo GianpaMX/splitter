@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.*
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlin.math.truncate
 
 class ExpenseViewModel @Inject constructor(
@@ -14,11 +15,13 @@ class ExpenseViewModel @Inject constructor(
 
     val payers = MutableLiveData<List<PayerModel>>()
     val receivers = MutableLiveData<List<ReceiverModel>>()
+    val total = MutableLiveData<Double>()
     val error = MutableLiveData<Exception>()
 
-    fun observePayers(expenseId: Long) {
-        observePayersUseCase.invoke(expenseId) {
-            payers.postValue(it.map { it.toPayerModel() })
+    fun observePayersAndReceivers(expenseId: Long) {
+        observePayersUseCase.invoke(expenseId) { payers, total ->
+            this.payers.postValue(payers.map { it.toPayerModel() })
+            this.total.postValue(total.toAmount())
         }
 
         observeReceiversUseCase.invoke(expenseId) {
@@ -65,10 +68,10 @@ private fun PayerModel.toPerson() = Person(
         name = name
 )
 
-private fun String.toCents() = try {
-    truncate(toFloat() * 100).toInt()
+private fun Double.toCents() = try {
+    (this * 100.0).roundToInt()
 } catch (t: Throwable) {
     0
 }
 
-private fun Int.toAmount() = if (this > 0) "${this.toFloat() / 100f}" else ""
+private fun Int.toAmount(): Double = this.toDouble() / 100.0
