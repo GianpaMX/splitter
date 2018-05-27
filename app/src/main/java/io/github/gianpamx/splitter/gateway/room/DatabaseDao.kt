@@ -4,6 +4,7 @@ import android.arch.persistence.room.*
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
+import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
 import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
 import io.reactivex.Flowable
@@ -51,4 +52,13 @@ interface DatabaseDao {
             "FROM Person AS P " +
             "LEFT JOIN Receiver AS R ON(P.id = R.personId AND expenseId = :expenseId)")
     fun observeReceivers(expenseId: Long): Flowable<List<ReceiverDBView>>
+
+    @Query("SELECT * FROM Receiver WHERE personId = :personId AND expenseId = :expenseId")
+    fun findReceiver(personId: Long, expenseId: Long): ReceiverDBModel?
+
+    @Insert
+    fun insert(receiver: ReceiverDBModel)
+
+    @Delete
+    fun deleteReceiver(receiver: ReceiverDBModel)
 }

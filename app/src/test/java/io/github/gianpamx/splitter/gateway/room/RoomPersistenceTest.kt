@@ -5,6 +5,7 @@ import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.Payment
 import io.github.gianpamx.splitter.core.Person
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
+import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
 import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
 import io.reactivex.internal.operators.flowable.FlowableJust
@@ -14,8 +15,9 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
+private const val anyExpenseId = 1L
 private val anyPerson = Person(id = 1)
-private val anyPayment = Payment(cents = 12345, expenseId = 1, person = anyPerson)
+private val anyPayment = Payment(cents = 12345, expenseId = anyExpenseId, person = anyPerson)
 
 @RunWith(MockitoJUnitRunner::class)
 class RoomPersistenceTest {
@@ -74,5 +76,26 @@ class RoomPersistenceTest {
         roomPersistence.deletePayment(anyPayment.expenseId, anyPerson.id)
 
         verify(databaseDao).deletePayment(any())
+    }
+
+    @Test
+    fun findReceiver() {
+        roomPersistence.findReceiver(anyPerson.id, anyExpenseId)
+
+        verify(databaseDao).findReceiver(any(), any())
+    }
+
+    @Test
+    fun createReceiver() {
+        roomPersistence.createReceiver(anyPerson.id, anyExpenseId)
+
+        verify(databaseDao).insert(any<ReceiverDBModel>())
+    }
+
+    @Test
+    fun deleteReceiver() {
+        roomPersistence.deleteReceiver(anyPerson.id, anyExpenseId)
+
+        verify(databaseDao).deleteReceiver(any())
     }
 }

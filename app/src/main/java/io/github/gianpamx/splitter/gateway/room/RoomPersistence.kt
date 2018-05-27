@@ -4,11 +4,11 @@ import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
+import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
 import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
-
     override fun updatePerson(person: Person) {
         databaseDao.update(person.toPersonDBModel())
     }
@@ -58,7 +58,19 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
             })
         }
     }
+
+    override fun findReceiver(personId: Long, expenseId: Long) = databaseDao.findReceiver(personId, expenseId)?.toPair()
+
+    override fun createReceiver(personId: Long, expenseId: Long) {
+        databaseDao.insert(ReceiverDBModel(expenseId = expenseId, personId = personId))
+    }
+
+    override fun deleteReceiver(personId: Long, expenseId: Long) {
+        databaseDao.deleteReceiver(ReceiverDBModel(expenseId = expenseId, personId = personId))
+    }
 }
+
+private fun ReceiverDBModel.toPair() = Pair(personId, expenseId)
 
 private fun ReceiverDBView.toPerson() = Person(
         id = personId,

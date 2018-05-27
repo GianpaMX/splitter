@@ -23,14 +23,14 @@ class ReceiverDialog : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(receiverModel: ReceiverModel): PayerDialog {
+        fun newInstance(receiverModel: ReceiverModel): ReceiverDialog {
             val args = Bundle()
             args.putParcelable(RECEIVER_MODEL, receiverModel)
 
-            val payerDialog = PayerDialog()
-            payerDialog.arguments = args
+            val dialog = ReceiverDialog()
+            dialog.arguments = args
 
-            return payerDialog
+            return dialog
         }
     }
 
@@ -47,15 +47,15 @@ class ReceiverDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(activity)
-            .setTitle(R.string.expense_payer_dialog_title)
+            .setTitle("Person?")
             .setView(view)
-            .setPositiveButton(R.string.expense_payer_dialog_save_button, { _, _ ->
+            .setPositiveButton("Save", { _, _ ->
                 receiverModel?.apply {
                     name = view.findViewById<EditText>(R.id.nameEditText).text.toString()
                     listener?.onSave(this)
                 }
             })
-            .setNegativeButton(R.string.expense_payer_dialog_cancel_button, { _, _ ->
+            .setNegativeButton("Cancel", { _, _ ->
                 listener?.onCancel()
             })
             .create()

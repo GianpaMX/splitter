@@ -11,6 +11,10 @@ class CoreModule {
             SavePaymentUseCaseImpl(persistenceGateway)
 
     @Provides
+    fun provideSaveReceiverUseCase(persistenceGateway: PersistenceGateway): SaveReceiverUseCase =
+            SaveReceiverUseCaseImpl(persistenceGateway)
+
+    @Provides
     fun provideObservePayersUseCase(persistenceGateway: PersistenceGateway): ObservePayersUseCase =
             ObservePayersUseCaseImpl(persistenceGateway)
 

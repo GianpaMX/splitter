@@ -5,10 +5,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import io.github.gianpamx.splitter.core.ObservePayersUseCase
-import io.github.gianpamx.splitter.core.ObserveReceiversUseCase
-import io.github.gianpamx.splitter.core.Payer
-import io.github.gianpamx.splitter.core.SavePaymentUseCase
+import io.github.gianpamx.splitter.core.*
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf
 import org.junit.Assert.assertThat
@@ -31,6 +28,9 @@ class ExpenseViewModelTest {
     private lateinit var savePaymentUseCase: SavePaymentUseCase
 
     @Mock
+    private lateinit var saveReceiverUseCase: SaveReceiverUseCase
+
+    @Mock
     private lateinit var observePayersUseCase: ObservePayersUseCase
 
     @Mock
@@ -40,7 +40,7 @@ class ExpenseViewModelTest {
 
     @Before
     fun setUp() {
-        expenseViewModel = ExpenseViewModel(savePaymentUseCase, observePayersUseCase, observeReceiversUseCase)
+        expenseViewModel = ExpenseViewModel(savePaymentUseCase, saveReceiverUseCase, observePayersUseCase, observeReceiversUseCase)
     }
 
     @Test

@@ -1,0 +1,45 @@
+package io.github.gianpamx.splitter.core
+
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
+
+private const val anyPersonId = 1L
+private const val anyExpenseId = 1L
+private val anyPerson = Person(id = anyPersonId)
+
+@RunWith(MockitoJUnitRunner::class)
+class SaveReceiverUseCaseImplTest {
+    @Mock
+    private lateinit var persistenceGateway: PersistenceGateway
+
+    private lateinit var saveReceiverUseCaseImpl: SaveReceiverUseCaseImpl
+
+    @Before
+    fun setUp() {
+        saveReceiverUseCaseImpl = SaveReceiverUseCaseImpl(persistenceGateway)
+    }
+
+    @Test
+    fun createPayment() {
+        whenever(persistenceGateway.findReceiver(any(), any())).thenReturn(null)
+
+        saveReceiverUseCaseImpl.invoke(true, anyPerson, anyExpenseId)
+
+        verify(persistenceGateway).createReceiver(any(), any())
+    }
+
+    @Test
+    fun deletePayment() {
+        whenever(persistenceGateway.findReceiver(any(), any())).thenReturn(Pair(anyPersonId, anyExpenseId))
+
+        saveReceiverUseCaseImpl.invoke(false, anyPerson, anyExpenseId)
+
+        verify(persistenceGateway).deleteReceiver(any(), any())
+    }
+}

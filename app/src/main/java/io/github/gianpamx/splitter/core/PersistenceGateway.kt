@@ -14,4 +14,7 @@ interface PersistenceGateway {
     fun createExpense(title: String, description: String): Expense
 
     fun observeReceivers(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit)
+    fun findReceiver(personId: Long, expenseId: Long): Pair<Long, Long>?
+    fun createReceiver(personId: Long, expenseId: Long)
+    fun deleteReceiver(personId: Long, expenseId: Long)
 }

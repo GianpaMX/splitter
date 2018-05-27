@@ -8,6 +8,7 @@ import kotlin.math.truncate
 
 class ExpenseViewModel @Inject constructor(
         private val savePaymentUseCase: SavePaymentUseCase,
+        private val saveReceiverUseCase: SaveReceiverUseCase,
         private val observePayersUseCase: ObservePayersUseCase,
         private val observeReceiversUseCase: ObserveReceiversUseCase) : ViewModel() {
 
@@ -32,7 +33,20 @@ class ExpenseViewModel @Inject constructor(
             error.postValue(e)
         }
     }
+
+    fun save(receiverModel: ReceiverModel, expenseId: Long) {
+        try {
+            saveReceiverUseCase.invoke(receiverModel.isChecked, receiverModel.toPerson(), expenseId)
+        } catch (e: Exception) {
+            error.postValue(e)
+        }
+    }
 }
+
+private fun ReceiverModel.toPerson() = Person(
+        id = id,
+        name = name
+)
 
 private fun Pair<Person, Boolean>.toReceiverModel() = ReceiverModel(
         first.id,

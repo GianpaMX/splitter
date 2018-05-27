@@ -129,7 +129,9 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     }
 
     override fun onSave(receiverModel: ReceiverModel) {
-        // TODO
+        launch {
+            viewModel.save(receiverModel, expense.id)
+        }
     }
 
     override fun onCancel() {
