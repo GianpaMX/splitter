@@ -15,7 +15,13 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
 
     override fun createPerson(person: Person) = databaseDao.insert(person.toPersonDBModel())
 
-    override fun findPayment(person: Person, expenseId: Long) = databaseDao.findPayment(person.id, expenseId)?.toPayment(person)
+    override fun findPayment(person: Person, expenseId: Long) =
+            databaseDao.findPayment(person.id, expenseId)?.toPayment(person)
+
+    override fun findPayments(expenseId: Long) =
+            databaseDao.findPayments(expenseId).map {
+                it.toPayment(databaseDao.findPerson(it.personId).toPerson())
+            }
 
     override fun createPayment(payment: Payment): Payment {
         databaseDao.insert(payment.toPaymentDBModel())
@@ -44,10 +50,19 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     }
 
 
+    override fun findExpense(expenseId: Long) =
+            databaseDao.findExpense(expenseId)?.toExpense()
+
     override fun createExpense(title: String, description: String): Expense {
         val expense = Expense(title = title, description = description)
         expense.id = databaseDao.insert(expense.toExpenseDBModel())
         return expense
+    }
+
+    override fun deleteExpense(expenseId: Long) {
+        databaseDao.findExpense(expenseId)?.let {
+            databaseDao.deleteExpense(it)
+        }
     }
 
 
@@ -59,7 +74,13 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
         }
     }
 
-    override fun findReceiver(personId: Long, expenseId: Long) = databaseDao.findReceiver(personId, expenseId)?.toPair()
+    override fun findReceiver(personId: Long, expenseId: Long) =
+            databaseDao.findReceiver(personId, expenseId)?.toPair()
+
+    override fun findReceivers(expenseId: Long) =
+            databaseDao.findReceivers(expenseId).map {
+                databaseDao.findPerson(it.personId).toPerson()
+            }
 
     override fun createReceiver(personId: Long, expenseId: Long) {
         databaseDao.insert(ReceiverDBModel(expenseId = expenseId, personId = personId))
@@ -69,6 +90,18 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
         databaseDao.deleteReceiver(ReceiverDBModel(expenseId = expenseId, personId = personId))
     }
 }
+
+
+private fun ExpenseDBModel.toExpense() = Expense(
+        id = id,
+        title = title,
+        description = description
+)
+
+private fun PersonDBModel.toPerson() = Person(
+        id = id,
+        name = name
+)
 
 private fun ReceiverDBModel.toPair() = Pair(personId, expenseId)
 

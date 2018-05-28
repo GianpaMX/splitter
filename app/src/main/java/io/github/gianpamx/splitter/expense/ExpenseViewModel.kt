@@ -5,13 +5,13 @@ import android.arch.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.math.truncate
 
 class ExpenseViewModel @Inject constructor(
         private val savePaymentUseCase: SavePaymentUseCase,
         private val saveReceiverUseCase: SaveReceiverUseCase,
         private val observePayersUseCase: ObservePayersUseCase,
-        private val observeReceiversUseCase: ObserveReceiversUseCase) : ViewModel() {
+        private val observeReceiversUseCase: ObserveReceiversUseCase,
+        private val keepOrDeleteExpenseUseCase : KeepOrDeleteExpenseUseCase) : ViewModel() {
 
     val payers = MutableLiveData<List<PayerModel>>()
     val receivers = MutableLiveData<List<ReceiverModel>>()
@@ -43,6 +43,10 @@ class ExpenseViewModel @Inject constructor(
         } catch (e: Exception) {
             error.postValue(e)
         }
+    }
+
+    fun exitExpense(expenseId: Long) {
+        keepOrDeleteExpenseUseCase.invoke(expenseId)
     }
 }
 

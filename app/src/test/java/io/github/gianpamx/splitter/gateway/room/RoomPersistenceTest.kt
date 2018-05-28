@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.*
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.Payment
 import io.github.gianpamx.splitter.core.Person
+import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
@@ -97,5 +98,35 @@ class RoomPersistenceTest {
         roomPersistence.deleteReceiver(anyPerson.id, anyExpenseId)
 
         verify(databaseDao).deleteReceiver(any())
+    }
+
+    @Test
+    fun findPayments() {
+        roomPersistence.findPayments(anyExpenseId)
+
+        verify(databaseDao).findPayments(any())
+    }
+
+    @Test
+    fun findExpense() {
+        roomPersistence.findExpense(anyExpenseId)
+
+        verify(databaseDao).findExpense(any())
+    }
+
+    @Test
+    fun deleteExpense() {
+        whenever(databaseDao.findExpense(any())).thenReturn(ExpenseDBModel())
+
+        roomPersistence.deleteExpense(anyExpenseId)
+
+        verify(databaseDao).deleteExpense(any())
+    }
+
+    @Test
+    fun findReceivers() {
+        roomPersistence.findReceivers(anyExpenseId)
+
+        verify(databaseDao).findReceivers(any())
     }
 }

@@ -34,11 +34,20 @@ class ExpenseViewModelTest {
     @Mock
     private lateinit var observeReceiversUseCase: ObserveReceiversUseCase
 
+    @Mock
+    private lateinit var keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase
+
     private lateinit var expenseViewModel: ExpenseViewModel
 
     @Before
     fun setUp() {
-        expenseViewModel = ExpenseViewModel(savePaymentUseCase, saveReceiverUseCase, observePayersUseCase, observeReceiversUseCase)
+        expenseViewModel = ExpenseViewModel(
+                savePaymentUseCase,
+                saveReceiverUseCase,
+                observePayersUseCase,
+                observeReceiversUseCase,
+                keepOrDeleteExpenseUseCase
+        )
     }
 
     @Test

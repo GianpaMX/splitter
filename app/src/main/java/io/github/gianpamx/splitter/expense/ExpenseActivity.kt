@@ -9,9 +9,12 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import kotlinx.android.synthetic.main.expense_activity.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import java.text.NumberFormat
 import javax.inject.Inject
@@ -85,19 +88,13 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
         viewModel.payers.observe(this, Observer {
             it?.let { payersAdapter.replacePayers(it) }
         })
-        payersAdapter.onPayerSelectedListener = { showPayerDialog(it) }
-
         viewModel.receivers.observe(this, Observer {
             it?.let { receiversAdapter.replaceReceivers(it) }
         })
-        receiversAdapter.onCheckedChangeListener = { receiverModel ->
-            launch {
-                viewModel.save(receiverModel, expense.id)
-            }
-        }
-        receiversAdapter.onLongClickListener = { receiverModel ->
-            showReceiverDialog(receiverModel)
-        }
+
+        payersAdapter.onPayerSelectedListener = ::showPayerDialog
+        receiversAdapter.onCheckedChangeListener = ::onSave
+        receiversAdapter.onLongClickListener = ::showReceiverDialog
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -128,14 +125,32 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
+        android.R.id.home -> exitExpense { finish() }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        exitExpense { super.onBackPressed() }
+    }
+
+    private fun exitExpense(exitFunction: (() -> Unit)? = null): Boolean {
+        launch(UI) {
+            async {
+                viewModel.exitExpense(expense.id)
+            }.await()
+
+            exitFunction?.invoke()
+        }
+        return true
+    }
+
     private fun showPayerDialog(payerModel: PayerModel) {
-        val payerDialog = PayerDialog.newInstance(payerModel)
-        payerDialog.show(supportFragmentManager, "DIALOG")
+        PayerDialog.newInstance(payerModel).show(supportFragmentManager, "DIALOG")
     }
 
     private fun showReceiverDialog(receiverModel: ReceiverModel) {
-        val payerDialog = ReceiverDialog.newInstance(receiverModel)
-        payerDialog.show(supportFragmentManager, "DIALOG")
+        ReceiverDialog.newInstance(receiverModel).show(supportFragmentManager, "DIALOG")
     }
 
     override fun onSave(payerModel: PayerModel) {
