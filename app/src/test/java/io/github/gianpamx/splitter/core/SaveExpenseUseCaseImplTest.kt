@@ -9,22 +9,22 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class CreateExpenseUseCaseImplTest {
+class SaveExpenseUseCaseImplTest {
     @Mock
     private lateinit var persistenceGateway: PersistenceGateway
 
-    private lateinit var createExpenseUseCaseImpl: CreateExpenseUseCaseImpl
+    private lateinit var createExpenseUseCaseImpl: SaveExpenseUseCaseImpl
 
     @Before
     fun setUp() {
-        createExpenseUseCaseImpl = CreateExpenseUseCaseImpl(persistenceGateway)
+        createExpenseUseCaseImpl = SaveExpenseUseCaseImpl(persistenceGateway)
     }
 
     @Test
     fun createExpense() {
 
-        createExpenseUseCaseImpl.invoke("ANY_TITLE", "ANY_DESCRIPTION")
+        createExpenseUseCaseImpl.invoke(Expense(title = "ANY_TITLE", description = "ANY_DESCRIPTION"))
 
-        verify(persistenceGateway).createExpense(any(), any())
+        verify(persistenceGateway).createExpense(any())
     }
 }

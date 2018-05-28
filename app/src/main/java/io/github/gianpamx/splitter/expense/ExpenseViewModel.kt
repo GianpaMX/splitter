@@ -11,7 +11,8 @@ class ExpenseViewModel @Inject constructor(
         private val saveReceiverUseCase: SaveReceiverUseCase,
         private val observePayersUseCase: ObservePayersUseCase,
         private val observeReceiversUseCase: ObserveReceiversUseCase,
-        private val keepOrDeleteExpenseUseCase : KeepOrDeleteExpenseUseCase) : ViewModel() {
+        private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
+        private val saveExpenseUseCase: SaveExpenseUseCase) : ViewModel() {
 
     val payers = MutableLiveData<List<PayerModel>>()
     val receivers = MutableLiveData<List<ReceiverModel>>()
@@ -48,7 +49,17 @@ class ExpenseViewModel @Inject constructor(
     fun exitExpense(expenseId: Long) {
         keepOrDeleteExpenseUseCase.invoke(expenseId)
     }
+
+    fun save(expenseModel: ExpenseModel) {
+        saveExpenseUseCase.invoke(expenseModel.toExpense())
+    }
 }
+
+private fun ExpenseModel.toExpense() = Expense(
+        id = id,
+        title = title,
+        description = description
+)
 
 private fun ReceiverModel.toPerson() = Person(
         id = id,

@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
@@ -81,6 +83,8 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
             }
         }
 
+        titleEditText.addTextChangedListener(expenseTitleWatcher)
+
         viewModel.total.observe(this, Observer {
             it?.let { totalTextView.text = currencyFormat.format(it) }
         })
@@ -114,6 +118,23 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
         override fun onTabSelected(tab: TabLayout.Tab?) {
             tab?.apply { onTabSelected(position) }
+        }
+    }
+
+    private val expenseTitleWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            expense.title = s.toString()
+            launch {
+                viewModel.save(expense)
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // Do nothing
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            // Do nothing
         }
     }
 

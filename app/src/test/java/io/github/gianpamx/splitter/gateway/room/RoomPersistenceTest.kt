@@ -1,6 +1,7 @@
 package io.github.gianpamx.splitter.gateway.room
 
 import com.nhaarman.mockito_kotlin.*
+import io.github.gianpamx.splitter.core.Expense
 import io.github.gianpamx.splitter.core.Payer
 import io.github.gianpamx.splitter.core.Payment
 import io.github.gianpamx.splitter.core.Person
@@ -128,5 +129,19 @@ class RoomPersistenceTest {
         roomPersistence.findReceivers(anyExpenseId)
 
         verify(databaseDao).findReceivers(any())
+    }
+
+    @Test
+    fun createExpense() {
+        roomPersistence.createExpense(Expense())
+
+        verify(databaseDao).insert(any<ExpenseDBModel>())
+    }
+
+    @Test
+    fun updateExpense() {
+        roomPersistence.updateExpense(Expense())
+
+        verify(databaseDao).update(any<ExpenseDBModel>())
     }
 }

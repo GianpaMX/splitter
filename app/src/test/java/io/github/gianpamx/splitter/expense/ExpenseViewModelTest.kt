@@ -37,6 +37,9 @@ class ExpenseViewModelTest {
     @Mock
     private lateinit var keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase
 
+    @Mock
+    private lateinit var saveExpenseUseCase: SaveExpenseUseCase
+
     private lateinit var expenseViewModel: ExpenseViewModel
 
     @Before
@@ -46,7 +49,8 @@ class ExpenseViewModelTest {
                 saveReceiverUseCase,
                 observePayersUseCase,
                 observeReceiversUseCase,
-                keepOrDeleteExpenseUseCase
+                keepOrDeleteExpenseUseCase,
+                saveExpenseUseCase
         )
     }
 
@@ -92,5 +96,12 @@ class ExpenseViewModelTest {
         expenseViewModel.observePayersAndReceivers(anyExpenseId)
 
         assertThat(expenseViewModel.total.value, equalTo(0.3))
+    }
+
+    @Test
+    fun createExpense() {
+        expenseViewModel.save(ExpenseModel())
+
+        verify(saveExpenseUseCase).invoke(any())
     }
 }

@@ -48,6 +48,9 @@ interface DatabaseDao {
     @Insert
     fun insert(expense: ExpenseDBModel): Long
 
+    @Update
+    fun update(expense: ExpenseDBModel)
+
     @Query("SELECT * FROM Expense WHERE id = :expenseId")
     fun findExpense(expenseId: Long): ExpenseDBModel?
 

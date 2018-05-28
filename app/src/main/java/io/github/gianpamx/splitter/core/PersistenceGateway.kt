@@ -12,7 +12,8 @@ interface PersistenceGateway {
 
     fun observePayments(expenseId: Long, observer: (List<Payer>) -> Unit)
 
-    fun createExpense(title: String, description: String): Expense
+    fun createExpense(expense: Expense): Long
+    fun updateExpense(expense: Expense)
     fun findExpense(expenseId: Long): Expense?
     fun deleteExpense(expenseId: Long)
 
