@@ -20,13 +20,19 @@ class PayerDialog : DialogFragment() {
     val view by lazy {
         (View.inflate(activity, R.layout.expense_payer_dialog, null) as ViewGroup).apply {
             findViewById<EditText>(R.id.nameEditText).setText(payerModel?.name)
-            findViewById<EditText>(R.id.amountEditText).setText(with(payerModel?.amount) {
-                when {
-                    hasDecimals() -> String.format("%.2f", this)
-                    isGreaterThanZero() -> String.format("%d", this?.toInt())
-                    else -> EMPTY_STRING
+            with(findViewById<EditText>(R.id.amountEditText)) {
+                setText(with(payerModel?.amount) {
+                    when {
+                        hasDecimals() -> String.format("%.2f", this)
+                        isGreaterThanZero() -> String.format("%d", this?.toInt())
+                        else -> EMPTY_STRING
+                    }
+                })
+
+                if (!payerModel?.name.isNullOrEmpty()) {
+                    requestFocus()
                 }
-            })
+            }
         }
     }
 
