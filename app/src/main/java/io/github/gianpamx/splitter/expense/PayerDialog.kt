@@ -21,10 +21,18 @@ class PayerDialog : DialogFragment() {
         (View.inflate(activity, R.layout.expense_payer_dialog, null) as ViewGroup).apply {
             findViewById<EditText>(R.id.nameEditText).setText(payerModel?.name)
             findViewById<EditText>(R.id.amountEditText).setText(with(payerModel?.amount) {
-                if (this != null && this > 0) toString() else EMPTY_STRING
+                when {
+                    hasDecimals() -> String.format("%.2f", this)
+                    isGreaterThanZero() -> String.format("%d", this?.toInt())
+                    else -> EMPTY_STRING
+                }
             })
         }
     }
+
+    private fun Double?.isGreaterThanZero() = (this ?: 0.0) > 0.0
+
+    private fun Double?.hasDecimals() = (this ?: 0.0) % 1 > 0.0
 
     companion object {
         fun newInstance(payerModel: PayerModel): PayerDialog {
