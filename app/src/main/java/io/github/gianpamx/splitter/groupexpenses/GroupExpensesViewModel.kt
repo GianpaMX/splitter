@@ -13,10 +13,12 @@ class GroupExpensesViewModel @Inject constructor(
         observeExpensesUseCase: ObserveExpensesUseCase
 ) : ViewModel() {
     val expenses = MutableLiveData<List<ExpenseItem>>()
+    val total = MutableLiveData<Double>()
 
     init {
-        observeExpensesUseCase.invoke {
-            expenses.postValue(it.map { it.toExpenseItem() })
+        observeExpensesUseCase.invoke { expenses, total ->
+            this.expenses.postValue(expenses.map { it.toExpenseItem() })
+            this.total.postValue(total.toAmount())
         }
     }
 
