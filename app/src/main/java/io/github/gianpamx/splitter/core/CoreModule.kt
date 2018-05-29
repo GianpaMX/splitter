@@ -23,10 +23,18 @@ class CoreModule {
             ObserveReceiversUseCaseImpl(persistenceGateway)
 
     @Provides
-    fun proviceCreateExpenseUseCase(persistenceGateway: PersistenceGateway): SaveExpenseUseCase =
+    fun provideCreateExpenseUseCase(persistenceGateway: PersistenceGateway): SaveExpenseUseCase =
             SaveExpenseUseCaseImpl(persistenceGateway)
 
     @Provides
-    fun proviceKeepOrDeleteExpenseUseCase(persistenceGateway: PersistenceGateway): KeepOrDeleteExpenseUseCase =
+    fun provideKeepOrDeleteExpenseUseCase(persistenceGateway: PersistenceGateway): KeepOrDeleteExpenseUseCase =
             KeepOrDeleteExpenseUseCaseImpl(persistenceGateway)
+
+    @Provides
+    fun provideObserveExpensesUseCase(persistenceGateway: PersistenceGateway): ObserveExpensesUseCase =
+            ObserveExpensesUseCaseImpl(persistenceGateway)
+
+    @Provides
+    fun provideGetExpenseUseCase(persistenceGateway: PersistenceGateway): GetExpenseUseCase =
+            GetExpenseUseCaseImpl(persistenceGateway)
 }

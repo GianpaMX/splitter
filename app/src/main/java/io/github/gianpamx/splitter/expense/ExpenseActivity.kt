@@ -36,7 +36,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
     private lateinit var viewModel: ExpenseViewModel
 
-    private lateinit var expense: ExpenseModel
+    private var expenseId = 0L
 
     private var selectedTab: Int = PAYERS_TAB
 
@@ -45,9 +45,9 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     private val receiversAdapter = ReceiversAdapter()
 
     companion object {
-        fun newIntent(expense: ExpenseModel, context: Context): Intent {
+        fun newIntent(expenseId: Long, context: Context): Intent {
             val intent = Intent(context, ExpenseActivity::class.java)
-            intent.putExtra(EXPENSE, expense)
+            intent.putExtra(EXPENSE, expenseId)
             return intent
         }
     }
@@ -63,8 +63,15 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        expense = intent.getParcelableExtra(EXPENSE)
-        viewModel.observePayersAndReceivers(expense.id)
+        expenseId = intent.getLongExtra(EXPENSE, 0L)
+
+        launch {
+            viewModel.loadExpense(expenseId)
+        }
+
+        viewModel.expense.observe(this, Observer {
+            it?.let { titleEditText.setText(it.title) }
+        })
 
         if (savedInstanceState != null) {
             selectedTab = savedInstanceState.getInt(SELECTED_TAB, PAYERS_TAB)
@@ -122,10 +129,9 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     }
 
     private val expenseTitleWatcher = object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            expense.title = s.toString()
+        override fun afterTextChanged(title: Editable?) {
             launch {
-                viewModel.save(expense)
+                viewModel.save(title.toString(), expenseId)
             }
         }
 
@@ -158,7 +164,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     private fun exitExpense(exitFunction: (() -> Unit)? = null): Boolean {
         launch(UI) {
             async {
-                viewModel.exitExpense(expense.id)
+                viewModel.exitExpense(expenseId)
             }.await()
 
             exitFunction?.invoke()
@@ -176,13 +182,13 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
     override fun onSave(payerModel: PayerModel) {
         launch {
-            viewModel.save(payerModel, expense.id)
+            viewModel.save(payerModel, expenseId)
         }
     }
 
     override fun onSave(receiverModel: ReceiverModel) {
         launch {
-            viewModel.save(receiverModel, expense.id)
+            viewModel.save(receiverModel, expenseId)
         }
     }
 

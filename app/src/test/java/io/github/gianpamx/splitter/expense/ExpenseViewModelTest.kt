@@ -40,17 +40,23 @@ class ExpenseViewModelTest {
     @Mock
     private lateinit var saveExpenseUseCase: SaveExpenseUseCase
 
+    @Mock
+    private lateinit var getExpenseUseCase: GetExpenseUseCase
+
     private lateinit var expenseViewModel: ExpenseViewModel
 
     @Before
     fun setUp() {
+        whenever(getExpenseUseCase.invoke(any())).thenReturn(Expense())
+
         expenseViewModel = ExpenseViewModel(
                 savePaymentUseCase,
                 saveReceiverUseCase,
                 observePayersUseCase,
                 observeReceiversUseCase,
                 keepOrDeleteExpenseUseCase,
-                saveExpenseUseCase
+                saveExpenseUseCase,
+                getExpenseUseCase
         )
     }
 
@@ -80,7 +86,7 @@ class ExpenseViewModelTest {
             }
         }
 
-        expenseViewModel.observePayersAndReceivers(anyExpenseId)
+        expenseViewModel.loadExpense(anyExpenseId)
 
         assertThat(PayerModel(id = 1, amount = 123.45), IsIn(expenseViewModel.payers.value!!))
     }
@@ -93,14 +99,14 @@ class ExpenseViewModelTest {
             }
         }
 
-        expenseViewModel.observePayersAndReceivers(anyExpenseId)
+        expenseViewModel.loadExpense(anyExpenseId)
 
         assertThat(expenseViewModel.total.value, equalTo(0.3))
     }
 
     @Test
     fun createExpense() {
-        expenseViewModel.save(ExpenseModel())
+        expenseViewModel.save("ANY TITLE", anyExpenseId)
 
         verify(saveExpenseUseCase).invoke(any())
     }

@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.*
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 class ExpenseViewModel @Inject constructor(
         private val savePaymentUseCase: SavePaymentUseCase,
@@ -12,14 +11,18 @@ class ExpenseViewModel @Inject constructor(
         private val observePayersUseCase: ObservePayersUseCase,
         private val observeReceiversUseCase: ObserveReceiversUseCase,
         private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
-        private val saveExpenseUseCase: SaveExpenseUseCase) : ViewModel() {
+        private val saveExpenseUseCase: SaveExpenseUseCase,
+        private val getExpenseUseCase: GetExpenseUseCase) : ViewModel() {
 
+    val expense = MutableLiveData<ExpenseModel>()
     val payers = MutableLiveData<List<PayerModel>>()
     val receivers = MutableLiveData<List<ReceiverModel>>()
     val total = MutableLiveData<Double>()
     val error = MutableLiveData<Exception>()
 
-    fun observePayersAndReceivers(expenseId: Long) {
+    fun loadExpense(expenseId: Long) {
+        expense.postValue(getExpenseUseCase.invoke(expenseId).toExpenseModel())
+
         observePayersUseCase.invoke(expenseId) { payers, total ->
             this.payers.postValue(payers.map { it.toPayerModel() })
             this.total.postValue(total.toAmount())
@@ -50,12 +53,14 @@ class ExpenseViewModel @Inject constructor(
         keepOrDeleteExpenseUseCase.invoke(expenseId)
     }
 
-    fun save(expenseModel: ExpenseModel) {
-        saveExpenseUseCase.invoke(expenseModel.toExpense())
+    fun save(title: String, expenseId: Long) {
+        val expense = getExpenseUseCase.invoke(expenseId)
+        expense.title = title
+        saveExpenseUseCase.invoke(expense)
     }
 }
 
-private fun ExpenseModel.toExpense() = Expense(
+private fun Expense.toExpenseModel() = ExpenseModel(
         id = id,
         title = title,
         description = description
@@ -82,11 +87,3 @@ private fun PayerModel.toPerson() = Person(
         id = id,
         name = name
 )
-
-private fun Double.toCents() = try {
-    (this * 100.0).roundToInt()
-} catch (t: Throwable) {
-    0
-}
-
-private fun Int.toAmount(): Double = this.toDouble() / 100.0

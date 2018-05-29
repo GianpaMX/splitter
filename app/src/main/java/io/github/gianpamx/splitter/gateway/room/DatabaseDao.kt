@@ -45,14 +45,17 @@ interface DatabaseDao {
     fun insert(person: PersonDBModel): Long
 
 
+    @Query("SELECT DISTINCT E.* FROM Expense AS E JOIN Payment AS P ON(E.id = P.expenseId)")
+    fun observeExpenses(): Flowable<List<ExpenseDBModel>>
+
+    @Query("SELECT * FROM Expense WHERE id = :expenseId")
+    fun findExpense(expenseId: Long): ExpenseDBModel?
+
     @Insert
     fun insert(expense: ExpenseDBModel): Long
 
     @Update
     fun update(expense: ExpenseDBModel)
-
-    @Query("SELECT * FROM Expense WHERE id = :expenseId")
-    fun findExpense(expenseId: Long): ExpenseDBModel?
 
     @Delete
     fun deleteExpense(expense: ExpenseDBModel)

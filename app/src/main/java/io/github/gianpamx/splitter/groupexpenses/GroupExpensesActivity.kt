@@ -1,21 +1,29 @@
 package io.github.gianpamx.splitter.groupexpenses
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
-import io.github.gianpamx.splitter.app.Android
 import io.github.gianpamx.splitter.expense.ExpenseActivity
 import kotlinx.android.synthetic.main.group_expenses_activity.*
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import java.text.NumberFormat
 import javax.inject.Inject
 
 class GroupExpensesActivity : AppCompatActivity() {
     @Inject
     lateinit var factory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var currencyFormat: NumberFormat
+
+    private lateinit var expensesAdapter: ExpensesAdapter
 
     private lateinit var viewModel: GroupExpensesViewModel
 
@@ -23,15 +31,27 @@ class GroupExpensesActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, factory).get(GroupExpensesViewModel::class.java)
+        expensesAdapter = ExpensesAdapter(currencyFormat)
+        expensesAdapter.onClickListener = {
+            startActivity(ExpenseActivity.newIntent(it.id, this@GroupExpensesActivity))
+        }
 
         setContentView(R.layout.group_expenses_activity)
+        setSupportActionBar(toolbar)
 
-        floatingActionButton.setOnClickListener {
-            floatingActionButton.hide()
-            launch(Android) {
-                val expense = async { viewModel.createExpense() }.await()
-                floatingActionButton.show()
-                startActivity(ExpenseActivity.newIntent(expense, this@GroupExpensesActivity))
+        expenseRecyclerView.layoutManager = LinearLayoutManager(this)
+        expenseRecyclerView.adapter = expensesAdapter
+
+        viewModel.expenses.observe(this, Observer {
+            it?.let { expensesAdapter.replaceExpenses(it) }
+        })
+
+        addExpenseFAB.setOnClickListener {
+            addExpenseFAB.hide()
+            launch(UI) {
+                val expenseId = async { viewModel.createExpense() }.await()
+                addExpenseFAB.show()
+                startActivity(ExpenseActivity.newIntent(expenseId, this@GroupExpensesActivity))
             }
         }
     }

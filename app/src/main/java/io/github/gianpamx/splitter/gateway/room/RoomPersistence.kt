@@ -50,6 +50,12 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     }
 
 
+    override fun observeExpenses(observer: (List<Expense>) -> Unit) {
+        databaseDao.observeExpenses().subscribe {
+            observer.invoke(it.map { it.toExpense() })
+        }
+    }
+
     override fun findExpense(expenseId: Long) =
             databaseDao.findExpense(expenseId)?.toExpense()
 
