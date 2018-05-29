@@ -50,12 +50,16 @@ class ReceiverDialog : DialogFragment() {
             .setTitle(R.string.expense_receiver_dialog_title)
             .setView(view)
             .setPositiveButton(R.string.expense_receiver_dialog_save_button, { _, _ ->
+                dialog.currentFocus?.hideKeyBoard()
+
                 receiverModel?.apply {
                     name = view.findViewById<EditText>(R.id.nameEditText).text.toString()
                     listener?.onSave(this)
                 }
             })
             .setNegativeButton(R.string.expense_receiver_dialog_cancel_button, { _, _ ->
+                dialog.currentFocus?.hideKeyBoard()
+
                 listener?.onCancel()
             })
             .create()

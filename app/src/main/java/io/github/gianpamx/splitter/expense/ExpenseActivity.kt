@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
+import android.view.WindowManager
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import kotlinx.android.synthetic.main.expense_activity.*
@@ -60,6 +61,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
         setContentView(R.layout.expense_activity)
         setSupportActionBar(toolbar)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
