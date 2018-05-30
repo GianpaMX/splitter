@@ -46,13 +46,11 @@ class GroupExpensesActivity : AppCompatActivity() {
         expenseRecyclerView.adapter = expensesAdapter
 
         viewModel.expenses.observe(this, Observer {
-            it?.let {
-                expensesAdapter.replaceExpenses(it)
-            }
+            it?.let { expensesAdapter.replaceExpenses(it) }
         })
 
         viewModel.total.observe(this, Observer {
-            it?.let { supportActionBar?.subtitle = currencyFormat.format(it) }
+            it?.let { runOnUiThread { supportActionBar?.subtitle = currencyFormat.format(it) } }
         })
 
         addExpenseFAB.setOnClickListener {

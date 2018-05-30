@@ -6,6 +6,7 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import io.github.gianpamx.splitter.data.MockModule
 import io.github.gianpamx.splitter.expense.ExpenseActivityTest
+import io.github.gianpamx.splitter.groupexpenses.GroupExpensesActivityTest
 import javax.inject.Singleton
 
 
@@ -29,4 +30,6 @@ interface TestAppComponent {
     fun inject(app: TestApp)
 
     fun inject(formActivityTest: ExpenseActivityTest)
+
+    fun inject(formActivityTest: GroupExpensesActivityTest)
 }

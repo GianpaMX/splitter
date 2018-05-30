@@ -1,20 +1,17 @@
-package io.github.gianpamx.splitter.expense
-
+package io.github.gianpamx.splitter.groupexpenses
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ActivityTestRule
+import android.support.test.espresso.intent.Intents.intended
+import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.runner.AndroidJUnit4
-import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
-import com.schibsted.spain.barista.assertion.BaristaRecyclerViewAssertions.assertRecyclerViewItemCount
-import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
-import com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton
-import com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo
 import com.schibsted.spain.barista.interaction.BaristaListInteractions.clickListItem
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.app.TestApp
+import io.github.gianpamx.splitter.expense.ExpenseActivity
 import io.github.gianpamx.splitter.gateway.room.AppDatabase
 import io.github.gianpamx.splitter.gateway.room.DatabaseDao
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
@@ -29,14 +26,14 @@ import org.junit.runner.RunWith
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
-class ExpenseActivityTest {
+class GroupExpensesActivityTest {
     @Rule
     @JvmField
     var instantExecutorRule = InstantTaskExecutorRule()
 
     @Rule
     @JvmField
-    var activityTestRule = ActivityTestRule(ExpenseActivity::class.java, false, false)
+    var activityTestRule = IntentsTestRule(GroupExpensesActivity::class.java, false, false)
 
     @Inject
     lateinit var database: AppDatabase
@@ -44,15 +41,10 @@ class ExpenseActivityTest {
     @Inject
     lateinit var dao: DatabaseDao
 
-    private lateinit var intent: Intent
-
     @Before
     fun setUp() {
         val testApp = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestApp
         testApp.testAppComponent.inject(this)
-
-        intent = Intent()
-        intent.putExtra("EXPENSE", 1L)
 
         dao.insert(ExpenseDBModel(id = 1L, title = "Any Title"))
         dao.insert(PersonDBModel(id = 1, name = "Any Name"))
@@ -66,42 +58,21 @@ class ExpenseActivityTest {
         database.clearAllTables()
     }
 
-
     @Test
-    fun checkReceiver() {
-        activityTestRule.launchActivity(intent)
+    fun addExpense() {
+        activityTestRule.launchActivity(Intent())
 
-        clickOn(R.string.expense_activity_tab_receivers_title)
-        clickListItem(R.id.recyclerView, 0)
+        clickOn(R.id.addExpenseFAB)
 
-        assertChecked(R.id.receiverCheckBox)
+        intended(hasComponent(ExpenseActivity::class.java.name))
     }
 
     @Test
-    fun addReceiver() {
-        val newReceiver = "New Receiver"
-        activityTestRule.launchActivity(intent)
+    fun editExpense() {
+        activityTestRule.launchActivity(Intent())
 
-        clickOn(R.string.expense_activity_tab_receivers_title)
-        clickOn(R.id.floatingActionButton)
-        writeTo(R.id.nameEditText, newReceiver)
-        clickDialogPositiveButton()
+        clickListItem(R.id.expenseRecyclerView, 0)
 
-        assertRecyclerViewItemCount(R.id.recyclerView, 3)
-        assertContains(newReceiver)
-    }
-
-    @Test
-    fun addPayer() {
-        val newPayer = "New Payer"
-        activityTestRule.launchActivity(intent)
-
-        clickOn(R.id.floatingActionButton)
-        writeTo(R.id.nameEditText, newPayer)
-        writeTo(R.id.amountEditText, "0.2")
-        clickDialogPositiveButton()
-
-        assertRecyclerViewItemCount(R.id.recyclerView, 3)
-        assertContains(newPayer)
+        intended(hasComponent(ExpenseActivity::class.java.name))
     }
 }

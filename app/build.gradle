@@ -103,7 +103,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:runner:$runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
     androidTestImplementation "android.arch.core:core-testing:$archCompVersion"
-    androidTestImplementation('com.schibsted.spain:barista:2.3.0') {
+    androidTestImplementation('com.schibsted.spain:barista:2.4.0') {
         exclude group: 'com.android.support'
         exclude group: 'org.jetbrains.kotlin'
     }
