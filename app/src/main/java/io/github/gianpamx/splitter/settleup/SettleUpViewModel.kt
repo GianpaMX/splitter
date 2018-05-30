@@ -2,54 +2,34 @@ package io.github.gianpamx.splitter.settleup
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import io.github.gianpamx.splitter.core.Card
+import io.github.gianpamx.splitter.core.SettleUpUseCase
+import io.github.gianpamx.splitter.core.toAmount
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
-class SettleUpViewModel @Inject constructor() : ViewModel() {
+class SettleUpViewModel @Inject constructor(settleUpUseCase: SettleUpUseCase) : ViewModel() {
     val cards = MutableLiveData<List<CardModel>>()
     val total = MutableLiveData<Double>()
 
     init {
-        val listOfCards = listOf(
-                CardModel(
-                        personId = 1,
-                        personName = "Juan",
-                        paid = 700.0,
-                        spent = 300.0,
-                        breakdownRows = listOf(
-                                Pair(300.0, "Ana")
-                        )
-                ),
-                CardModel(
-                        personId = 2,
-                        personName = "Pepe",
-                        paid = 500.0,
-                        spent = 300.0,
-                        breakdownRows = listOf(
-                                Pair(100.0, "Ana"),
-                                Pair(100.0, "Ale")
-                        )
-                ),
-                CardModel(
-                        personId = 3,
-                        personName = "Ana",
-                        paid = 300.0,
-                        spent = 700.0,
-                        breakdownRows = listOf(
-                                Pair(-300.0, "Juan"),
-                                Pair(-100.0, "Pepe")
-                        )
-                ),
-                CardModel(
-                        personId = 4,
-                        personName = "Ale",
-                        paid = 0.0,
-                        spent = 100.0,
-                        breakdownRows = listOf(
-                                Pair(-100.0, "Pepe")
-                        )
-                )
-        )
-        cards.postValue(listOfCards)
-        total.postValue(listOfCards.sumByDouble { it.paid })
+        launch(UI) {
+            val listOfCards = async { settleUpUseCase.invoke().map { it.toCardModel() } }.await()
+
+            cards.postValue(listOfCards)
+            total.postValue(listOfCards.sumByDouble { it.paid })
+        }
     }
 }
+
+private fun Card.toCardModel() = CardModel(
+        personId = personId,
+        personName = personName,
+        paid = centsPaid.toAmount(),
+        spent = centsSpent.toAmount(),
+        breakdownRows = breakdownRows.map { it.toBreakdownRowModel() }
+)
+
+private fun Pair<Int, String>.toBreakdownRowModel() = Pair(first.toAmount(), second)

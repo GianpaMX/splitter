@@ -37,4 +37,8 @@ class CoreModule {
     @Provides
     fun provideGetExpenseUseCase(persistenceGateway: PersistenceGateway): GetExpenseUseCase =
             GetExpenseUseCaseImpl(persistenceGateway)
+
+    @Provides
+    fun provideSettleUpUseCase(persistenceGateway: PersistenceGateway): SettleUpUseCase =
+            SettleUpUseCaseImpl(persistenceGateway)
 }

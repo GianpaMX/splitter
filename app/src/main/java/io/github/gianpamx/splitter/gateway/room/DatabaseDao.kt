@@ -25,6 +25,9 @@ interface DatabaseDao {
     @Query("SELECT * FROM Payment WHERE expenseId = :expenseId")
     fun findPayments(expenseId: Long): List<PaymentDBModel>
 
+    @Query("SELECT * FROM Payment WHERE personId = :personId")
+    fun findPaymentsByPersonId(personId: Long): List<PaymentDBModel>
+
     @Insert
     fun insert(payment: PaymentDBModel)
 
@@ -38,6 +41,9 @@ interface DatabaseDao {
     @Query("SELECT * FROM Person WHERE id = :personId")
     fun findPerson(personId: Long): PersonDBModel
 
+    @Query("SELECT * FROM Person")
+    fun findPersons(): List<PersonDBModel>
+
     @Update
     fun update(person: PersonDBModel)
 
@@ -50,6 +56,9 @@ interface DatabaseDao {
 
     @Query("SELECT * FROM Expense WHERE id = :expenseId")
     fun findExpense(expenseId: Long): ExpenseDBModel?
+
+    @Query("SELECT DISTINCT E.* FROM Expense AS E JOIN Receiver AS R ON(E.id = R.expenseId) WHERE R.personId = :personId")
+    fun findExpensesByPersonId(personId: Long): List<ExpenseDBModel>
 
     @Insert
     fun insert(expense: ExpenseDBModel): Long

@@ -15,6 +15,9 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
 
     override fun createPerson(person: Person) = databaseDao.insert(person.toPersonDBModel())
 
+    override fun findPersons() = databaseDao.findPersons().map { it.toPerson() }
+
+
     override fun findPayment(person: Person, expenseId: Long) =
             databaseDao.findPayment(person.id, expenseId)?.toPayment(person)
 
@@ -41,6 +44,11 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
         return null
     }
 
+    override fun findPaymentsByPersonId(personId: Long) =
+            databaseDao.findPaymentsByPersonId(personId).map {
+                it.toPayment(databaseDao.findPerson(it.personId).toPerson())
+            }
+
     override fun observePayments(expenseId: Long, observer: (List<Payer>) -> Unit) {
         databaseDao.observePayments(expenseId).subscribe {
             observer.invoke(it.map {
@@ -58,6 +66,8 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
 
     override fun findExpense(expenseId: Long) =
             databaseDao.findExpense(expenseId)?.toExpense()
+
+    override fun findExpensesByPersonId(personId: Long) = databaseDao.findExpensesByPersonId(personId).map { it.toExpense() }
 
     override fun createExpense(expense: Expense) =
             databaseDao.insert(expense.toExpenseDBModel())
