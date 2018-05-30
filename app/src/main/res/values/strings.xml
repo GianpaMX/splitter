@@ -18,4 +18,7 @@
     <string name="expense_receiver_dialog_title">Who else?</string>
     <string name="expense_receiver_dialog_save_button">Save</string>
     <string name="expense_receiver_dialog_cancel_button">Cancel</string>
+    <string name="settle_up_card_description">Paid %1$s and spent %2$s</string>
+    <string name="settle_up_card_breakdown_collect_row">Collect %1$s from %2$s</string>
+    <string name="settle_up_card_breakdown_pay_row">Pay %1$s to %2$s</string>
 </resources>

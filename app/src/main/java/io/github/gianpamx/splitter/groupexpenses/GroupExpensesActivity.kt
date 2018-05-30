@@ -6,9 +6,12 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.expense.ExpenseActivity
+import io.github.gianpamx.splitter.settleup.SettleUpActivity
 import kotlinx.android.synthetic.main.group_expenses_activity.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -60,5 +63,19 @@ class GroupExpensesActivity : AppCompatActivity() {
                 startActivity(ExpenseActivity.newIntent(expenseId, this@GroupExpensesActivity))
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.group_expenses_menu, menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
+        R.id.settleUpItem -> {
+            startActivity(SettleUpActivity.newIntent(this))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 }

@@ -9,6 +9,8 @@ import io.github.gianpamx.splitter.expense.ExpenseActivity
 import io.github.gianpamx.splitter.expense.ExpenseViewModel
 import io.github.gianpamx.splitter.groupexpenses.GroupExpensesActivity
 import io.github.gianpamx.splitter.groupexpenses.GroupExpensesViewModel
+import io.github.gianpamx.splitter.settleup.SettleUpActivity
+import io.github.gianpamx.splitter.settleup.SettleUpViewModel
 
 
 @Module(includes = [ViewModelFactoryModule::class])
@@ -29,4 +31,13 @@ abstract class Binder {
     @IntoMap
     @ViewModelKey(GroupExpensesViewModel::class)
     abstract fun bindGroupExpensesViewModel(viewModel: GroupExpensesViewModel): ViewModel
+
+
+    @ContributesAndroidInjector
+    abstract fun bindSettleUpActivity(): SettleUpActivity
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettleUpViewModel::class)
+    abstract fun bindSettleUpViewModel(viewModel: SettleUpViewModel): ViewModel
 }
