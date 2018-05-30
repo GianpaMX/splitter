@@ -1,6 +1,5 @@
 package io.github.gianpamx.splitter.groupexpenses
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.intent.Intents.intended
@@ -9,6 +8,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import com.schibsted.spain.barista.interaction.BaristaListInteractions.clickListItem
+import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.app.TestApp
 import io.github.gianpamx.splitter.expense.ExpenseActivity
@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
@@ -58,6 +59,7 @@ class GroupExpensesActivityTest {
     fun addExpense() {
         activityTestRule.launchActivity(Intent())
 
+        sleep(3, TimeUnit.SECONDS)
         clickOn(R.id.addExpenseFAB)
 
         intended(hasComponent(ExpenseActivity::class.java.name))

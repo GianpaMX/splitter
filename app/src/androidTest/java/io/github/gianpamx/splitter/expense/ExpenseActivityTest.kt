@@ -1,7 +1,6 @@
 package io.github.gianpamx.splitter.expense
 
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.rule.ActivityTestRule
