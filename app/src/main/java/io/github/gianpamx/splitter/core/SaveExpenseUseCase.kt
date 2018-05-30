@@ -1,5 +1,7 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Expense
+
 interface SaveExpenseUseCase {
     fun invoke(expense: Expense): Expense
 }

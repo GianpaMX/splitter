@@ -1,5 +1,7 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Expense
+
 interface GetExpenseUseCase {
     fun invoke(expenseId: Long): Expense
 }

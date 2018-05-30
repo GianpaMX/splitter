@@ -1,5 +1,6 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Card
 import kotlin.math.absoluteValue
 
 interface SettleUpUseCase {

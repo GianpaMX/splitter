@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.core
+package io.github.gianpamx.splitter.core.model
 
 data class Card(
         val personId: Long = 0,

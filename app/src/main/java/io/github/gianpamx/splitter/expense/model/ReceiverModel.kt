@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.expense
+package io.github.gianpamx.splitter.expense.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

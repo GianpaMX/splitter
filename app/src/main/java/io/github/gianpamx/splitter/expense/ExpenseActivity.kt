@@ -15,6 +15,8 @@ import android.view.MenuItem
 import android.view.WindowManager
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
+import io.github.gianpamx.splitter.expense.model.PayerModel
+import io.github.gianpamx.splitter.expense.model.ReceiverModel
 import kotlinx.android.synthetic.main.expense_activity.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async

@@ -4,6 +4,9 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import io.github.gianpamx.splitter.core.model.Expense
+import io.github.gianpamx.splitter.core.model.Payment
+import io.github.gianpamx.splitter.core.model.Person
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

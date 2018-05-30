@@ -1,5 +1,8 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Payment
+import io.github.gianpamx.splitter.core.model.Person
+
 interface SavePaymentUseCase {
     @Throws(Exception::class)
     fun invoke(cents: Int, person: Person, expenseId: Long): Payment?

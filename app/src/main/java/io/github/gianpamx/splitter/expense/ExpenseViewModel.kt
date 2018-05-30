@@ -3,6 +3,12 @@ package io.github.gianpamx.splitter.expense
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.*
+import io.github.gianpamx.splitter.core.model.Expense
+import io.github.gianpamx.splitter.core.model.Payer
+import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.expense.model.ExpenseModel
+import io.github.gianpamx.splitter.expense.model.PayerModel
+import io.github.gianpamx.splitter.expense.model.ReceiverModel
 import javax.inject.Inject
 
 class ExpenseViewModel @Inject constructor(

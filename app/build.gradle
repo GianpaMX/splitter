@@ -142,7 +142,9 @@ task fullCoverageReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'cr
             '*/*_MembersInjector*.*', //Dagger2 generated code
             '**/*_*Factory*.*', //Dagger2 generated code
             '*/*Component*.*', //Dagger2 generated code
-            '**/*Module*.*' //Dagger2 generated code
+            '**/*Module*.*', //Dagger2 generated code
+            '**/model/*.*',
+            '**/room/view/*.*'
     ]
     def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
     def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)

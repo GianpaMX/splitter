@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
+import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
 import kotlinx.android.synthetic.main.group_expenses_item.view.*
 import java.text.NumberFormat
 

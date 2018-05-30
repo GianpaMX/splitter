@@ -1,5 +1,7 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Person
+
 interface SaveReceiverUseCase {
     fun invoke(isChecked: Boolean, person: Person, expenseId: Long)
 

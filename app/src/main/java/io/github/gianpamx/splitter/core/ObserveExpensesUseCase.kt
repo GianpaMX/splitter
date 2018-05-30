@@ -1,5 +1,7 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Expense
+
 interface ObserveExpensesUseCase {
     fun invoke(observer: (List<Pair<Expense, Int>>, Int) -> Unit)
 }

@@ -2,9 +2,10 @@ package io.github.gianpamx.splitter.settleup
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.github.gianpamx.splitter.core.Card
+import io.github.gianpamx.splitter.core.model.Card
 import io.github.gianpamx.splitter.core.SettleUpUseCase
 import io.github.gianpamx.splitter.core.toAmount
+import io.github.gianpamx.splitter.settleup.model.CardModel
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch

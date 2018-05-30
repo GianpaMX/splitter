@@ -3,6 +3,9 @@ package io.github.gianpamx.splitter.expense
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.*
 import io.github.gianpamx.splitter.core.*
+import io.github.gianpamx.splitter.core.model.Expense
+import io.github.gianpamx.splitter.core.model.Payer
+import io.github.gianpamx.splitter.expense.model.PayerModel
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf

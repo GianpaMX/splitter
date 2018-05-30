@@ -1,5 +1,7 @@
 package io.github.gianpamx.splitter.core
 
+import io.github.gianpamx.splitter.core.model.Payer
+
 interface ObservePayersUseCase {
 
     fun invoke(expenseId: Long, observer: (List<Payer>, Int) -> Unit)

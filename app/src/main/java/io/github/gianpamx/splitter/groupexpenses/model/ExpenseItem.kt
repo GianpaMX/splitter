@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.groupexpenses
+package io.github.gianpamx.splitter.groupexpenses.model
 
 data class ExpenseItem(
         var id: Long = 0,

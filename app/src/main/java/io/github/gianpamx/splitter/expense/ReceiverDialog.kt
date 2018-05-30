@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import io.github.gianpamx.splitter.R
+import io.github.gianpamx.splitter.expense.model.ReceiverModel
 
 private const val RECEIVER_MODEL = "ReceiverModel"
 

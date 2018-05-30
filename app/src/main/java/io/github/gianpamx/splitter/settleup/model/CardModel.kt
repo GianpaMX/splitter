@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.settleup
+package io.github.gianpamx.splitter.settleup.model
 
 data class CardModel(
         var personId: Long = 0,

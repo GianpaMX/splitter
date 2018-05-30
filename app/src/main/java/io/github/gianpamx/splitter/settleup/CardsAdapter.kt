@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
+import io.github.gianpamx.splitter.settleup.model.CardModel
 import kotlinx.android.synthetic.main.settle_up_card.view.*
 import java.text.NumberFormat
 import kotlin.math.absoluteValue

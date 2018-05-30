@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.expense.ReceiversAdapter.ViewHolder
+import io.github.gianpamx.splitter.expense.model.ReceiverModel
 import kotlinx.android.synthetic.main.expense_receiver_item.view.*
 
 class ReceiversAdapter : RecyclerView.Adapter<ViewHolder>() {

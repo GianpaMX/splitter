@@ -2,10 +2,11 @@ package io.github.gianpamx.splitter.groupexpenses
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import io.github.gianpamx.splitter.core.Expense
+import io.github.gianpamx.splitter.core.model.Expense
 import io.github.gianpamx.splitter.core.ObserveExpensesUseCase
 import io.github.gianpamx.splitter.core.SaveExpenseUseCase
 import io.github.gianpamx.splitter.core.toAmount
+import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
 import javax.inject.Inject
 
 class GroupExpensesViewModel @Inject constructor(
