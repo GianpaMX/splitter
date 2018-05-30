@@ -29,10 +29,6 @@ import javax.inject.Inject
 class GroupExpensesActivityTest {
     @Rule
     @JvmField
-    var instantExecutorRule = InstantTaskExecutorRule()
-
-    @Rule
-    @JvmField
     var activityTestRule = IntentsTestRule(GroupExpensesActivity::class.java, false, false)
 
     @Inject

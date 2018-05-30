@@ -50,7 +50,7 @@ class GroupExpensesActivity : AppCompatActivity() {
         })
 
         viewModel.total.observe(this, Observer {
-            it?.let { runOnUiThread { supportActionBar?.subtitle = currencyFormat.format(it) } }
+            it?.let { supportActionBar?.subtitle = currencyFormat.format(it) }
         })
 
         addExpenseFAB.setOnClickListener {

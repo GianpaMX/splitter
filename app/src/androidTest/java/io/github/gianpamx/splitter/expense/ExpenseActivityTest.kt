@@ -32,10 +32,6 @@ import javax.inject.Inject
 class ExpenseActivityTest {
     @Rule
     @JvmField
-    var instantExecutorRule = InstantTaskExecutorRule()
-
-    @Rule
-    @JvmField
     var activityTestRule = ActivityTestRule(ExpenseActivity::class.java, false, false)
 
     @Inject
