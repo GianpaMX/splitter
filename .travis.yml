@@ -1,6 +1,7 @@
 language: java
 jdk:
   - oraclejdk8
+sudo: false
 
 before_cache:
   # Do not cache a few Gradle files/directories (see https://docs.travis-ci.com/user/languages/java/#Caching)
@@ -27,6 +28,10 @@ env:
     - PATH=$ANDROID_HOME/tools/bin:$PATH
     - PATH=$ANDROID_HOME/platform-tools:$PATH
     - PATH=$ANDROID_HOME/emulator:$PATH
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_9ceb0e392b9e_key -iv $encrypted_9ceb0e392b9e_iv -in gianpamx.tar.enc -out gianpamx.tar -d
+  - tar -xvf gianpamx.tar -C app/
 
 install:
   # Download and unzip the Android SDK tools (if not already there thanks to the cache mechanism)
@@ -57,4 +62,9 @@ script:
 after_success:
 - bash <(curl -s https://codecov.io/bash) -f ./app/build/reports/jacoco/fullCoverageReport/fullCoverageReport.xml
 
-sudo: false
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: ./gradlew :app:publishApkRelease
+  on:
+    branch: master

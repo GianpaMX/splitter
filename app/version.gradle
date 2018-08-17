@@ -1,0 +1,16 @@
+ext.getVersionCode = { ->
+    return getVersion()
+}
+
+ext.getVersionName = { ->
+    return getVersionCode().toString()
+}
+
+static def getVersion() {
+    def version = 2
+    if (System.getenv("TRAVIS_BUILD_NUMBER")) {
+        version = Integer.parseInt(System.getenv("TRAVIS_BUILD_NUMBER"))
+    }
+
+    return version
+}

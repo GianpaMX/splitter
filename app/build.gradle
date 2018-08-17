@@ -2,7 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'jacoco'
+
+apply from: 'jacoco.gradle'
+apply from: 'play.gradle'
+apply from: 'version.gradle'
+
+def appVersionCode = getVersionCode()
+def appVersionName = getVersionName()
 
 def SDK_VERSION = 27
 
@@ -13,9 +19,17 @@ android {
         applicationId "io.github.gianpamx.splitter"
         minSdkVersion 19
         targetSdkVersion SDK_VERSION
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "io.github.gianpamx.splitter.CustomTestRunner"
+    }
+    signingConfigs {
+        release {
+            storeFile file(signingStoreFile)
+            storePassword signingStorePassword
+            keyAlias signingKeyAlias
+            keyPassword signingKeyPassword
+        }
     }
     buildTypes {
         debug {
@@ -23,6 +37,7 @@ android {
         }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,14 +51,6 @@ kotlin {
     experimental {
         coroutines 'enable'
     }
-}
-
-jacoco {
-    toolVersion = "0.8.1"
-}
-
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
 }
 
 dependencies {
@@ -108,52 +115,4 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin'
     }
     kaptAndroidTest "com.google.dagger:dagger-android-processor:$daggerVersion"
-}
-
-task fullCoverageReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-
-    def fileFilter = [
-            '**/*Test*.*',
-            '**/AutoValue_*.*',
-            '**/*JavascriptBridge.class',
-            '**/R.class',
-            '**/R$*.class',
-            '**/Manifest*.*',
-            'android/**/*.*',
-            '**/BuildConfig.*',
-            '**/*$ViewBinder*.*',
-            '**/*$ViewInjector*.*',
-            '**/Lambda$*.class',
-            '**/Lambda.class',
-            '**/*Lambda.class',
-            '**/*Lambda*.class',
-            '**/*$InjectAdapter.class',
-            '**/*$ModuleAdapter.class',
-            '**/*$ViewInjector*.class',
-            '**/*_Impl*',
-            '**/Dagger*Component*',
-            '**/Dagger*Impl*',
-            '**/Dagger*Builder*',
-            '**/*_MembersInjector.class', //Dagger2 generated code
-            '*/*_MembersInjector*.*', //Dagger2 generated code
-            '**/*_*Factory*.*', //Dagger2 generated code
-            '*/*Component*.*', //Dagger2 generated code
-            '**/*Module*.*', //Dagger2 generated code
-            '**/model/*.*',
-            '**/room/view/*.*'
-    ]
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree, kotlinDebugTree])
-    executionData = fileTree(dir: "$buildDir", includes: [
-            "outputs/code-coverage/connected/*coverage.ec",
-            "jacoco/testDebugUnitTest.exec"
-    ])
 }
