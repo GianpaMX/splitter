@@ -2,9 +2,8 @@
     <string name="app_name">Splitter</string>
 
     <string name="expense_title_hint">Title</string>
-    <string name="expense_description_hint">Description</string>
     <string name="expense_activity_tab_payers_title">Who paid?</string>
-    <string name="expense_activity_tab_receivers_title">For who?</string>
+    <string name="expense_activity_tab_receivers_title">For whom?</string>
 
 
     <string name="expense_payer_dialog_save_button">Save</string>
@@ -15,7 +14,7 @@
     <string name="expense_payer_item_avatar">Payer avatar</string>
 
     <string name="expense_receiver_name_hint">Name</string>
-    <string name="expense_receiver_dialog_title">Who else?</string>
+    <string name="expense_receiver_dialog_title">Whom else?</string>
     <string name="expense_receiver_dialog_save_button">Save</string>
     <string name="expense_receiver_dialog_cancel_button">Cancel</string>
     <string name="settle_up_card_description">Paid %1$s and spent %2$s</string>

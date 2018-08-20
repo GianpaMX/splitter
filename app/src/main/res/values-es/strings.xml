@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Splitter</string>
+
+    <string name="expense_title_hint">Título</string>
+    <string name="expense_activity_tab_payers_title">¿Quién pagó?</string>
+    <string name="expense_activity_tab_receivers_title">¿Para quién?</string>
+
+
+    <string name="expense_payer_dialog_save_button">Guardar</string>
+    <string name="expense_payer_dialog_cancel_button">Cancelar</string>
+    <string name="expense_payer_dialog_title">¿Quién pagó y cuánto?</string>
+    <string name="expense_payer_name_hint">Nombre</string>
+    <string name="expense_payer_amount_hint">Cantidad</string>
+    <string name="expense_payer_item_avatar">Foto</string>
+
+    <string name="expense_receiver_name_hint">Nombre</string>
+    <string name="expense_receiver_dialog_title">¿A quién más?</string>
+    <string name="expense_receiver_dialog_save_button">Guardar</string>
+    <string name="expense_receiver_dialog_cancel_button">Cancelar</string>
+    <string name="settle_up_card_description">Pagó %1$s y gastó %2$s</string>
+    <string name="settle_up_card_breakdown_collect_row">Recibe %1$s de %2$s</string>
+    <string name="settle_up_card_breakdown_pay_row">Paga %1$s a %2$s</string>
+</resources>
