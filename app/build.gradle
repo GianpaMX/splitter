@@ -10,7 +10,7 @@ apply from: 'version.gradle'
 def appVersionCode = getVersionCode()
 def appVersionName = getVersionName()
 
-def SDK_VERSION = 27
+def SDK_VERSION = 28
 
 android {
     compileSdkVersion SDK_VERSION
