@@ -1,8 +1,8 @@
 package io.github.gianpamx.splitter.expense
 
-import android.support.v7.recyclerview.extensions.AsyncListDiffer
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
@@ -52,7 +52,7 @@ class PayersAdapter(private val currencyFormat: NumberFormat) : RecyclerView.Ada
     }
 
     class NewCallback : DiffUtil.ItemCallback<PayerModel>() {
-        override fun areItemsTheSame(oldItem: PayerModel?, newItem: PayerModel?) = oldItem?.id == newItem?.id
-        override fun areContentsTheSame(oldItem: PayerModel?, newItem: PayerModel?) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: PayerModel, newItem: PayerModel) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: PayerModel, newItem: PayerModel) = oldItem == newItem
     }
 }

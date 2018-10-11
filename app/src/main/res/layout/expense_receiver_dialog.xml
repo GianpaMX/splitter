@@ -8,7 +8,7 @@
     android:paddingStart="24dp"
     android:paddingTop="@dimen/vertical_padding">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -19,6 +19,6 @@
             android:hint="@string/expense_receiver_name_hint"
             android:inputType="textPersonName" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </FrameLayout>

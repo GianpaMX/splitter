@@ -1,8 +1,8 @@
 package io.github.gianpamx.splitter.settleup
 
-import android.support.v7.recyclerview.extensions.AsyncListDiffer
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
@@ -51,7 +51,7 @@ class CardsAdapter(private val currencyFormat: NumberFormat) : RecyclerView.Adap
     }
 
     class NewCallback : DiffUtil.ItemCallback<CardModel>() {
-        override fun areItemsTheSame(oldItem: CardModel?, newItem: CardModel?) = oldItem?.personId == newItem?.personId
-        override fun areContentsTheSame(oldItem: CardModel?, newItem: CardModel?) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: CardModel, newItem: CardModel) = oldItem.personId == newItem.personId
+        override fun areContentsTheSame(oldItem: CardModel, newItem: CardModel) = oldItem == newItem
     }
 }

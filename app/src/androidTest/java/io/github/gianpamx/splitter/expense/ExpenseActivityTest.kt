@@ -2,9 +2,9 @@ package io.github.gianpamx.splitter.expense
 
 
 import android.content.Intent
-import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
 import com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked
 import com.schibsted.spain.barista.assertion.BaristaRecyclerViewAssertions.assertRecyclerViewItemCount
 import com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains

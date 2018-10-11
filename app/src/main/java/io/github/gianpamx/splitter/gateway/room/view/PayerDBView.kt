@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.gateway.room.view
 
-import android.arch.persistence.room.ColumnInfo
+import androidx.room.ColumnInfo
 
 data class PayerDBView(
         @ColumnInfo(name = "id")

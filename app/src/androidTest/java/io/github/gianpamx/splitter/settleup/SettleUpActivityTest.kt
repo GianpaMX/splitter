@@ -1,9 +1,9 @@
 package io.github.gianpamx.splitter.settleup
 
 import android.content.Intent
-import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
 import io.github.gianpamx.splitter.app.TestApp
 import io.github.gianpamx.splitter.gateway.room.AppDatabase
 import io.github.gianpamx.splitter.gateway.room.DatabaseDao

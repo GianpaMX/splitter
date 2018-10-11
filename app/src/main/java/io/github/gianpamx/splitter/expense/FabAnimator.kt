@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.expense
 
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.TabLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 
 class FabAnimator(private val floatingActionButton: FloatingActionButton) : TabLayout.OnTabSelectedListener {
     override fun onTabReselected(tab: TabLayout.Tab?) {

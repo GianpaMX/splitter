@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.expense
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.*
 import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.core.model.Expense
