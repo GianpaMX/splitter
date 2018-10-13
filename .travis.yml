@@ -29,10 +29,6 @@ env:
     - PATH=$ANDROID_HOME/platform-tools:$PATH
     - PATH=$ANDROID_HOME/emulator:$PATH
 
-before_install:
-  - openssl aes-256-cbc -K $encrypted_9ceb0e392b9e_key -iv $encrypted_9ceb0e392b9e_iv -in gianpamx.tar.enc -out gianpamx.tar -d
-  - tar -xvf gianpamx.tar -C app/
-
 install:
   # Download and unzip the Android SDK tools (if not already there thanks to the cache mechanism)
   # Latest version available here: https://developer.android.com/studio/index.html#downloads
@@ -65,6 +61,9 @@ after_success:
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./gradlew :app:publishApkRelease
+  script: 
+    openssl aes-256-cbc -K $encrypted_9ceb0e392b9e_key -iv $encrypted_9ceb0e392b9e_iv -in gianpamx.tar.enc -out gianpamx.tar -d ;
+    tar -xvf gianpamx.tar -C app/ ;
+    ./gradlew :app:publishApkRelease
   on:
     branch: master
