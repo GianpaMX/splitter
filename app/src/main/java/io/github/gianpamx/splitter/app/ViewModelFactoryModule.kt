@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.app
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider

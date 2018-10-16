@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.gateway.room
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel

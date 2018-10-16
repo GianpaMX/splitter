@@ -1,8 +1,8 @@
 package io.github.gianpamx.splitter.gateway.room.model
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Index
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(tableName = "Payment",
         indices = [Index(value = ["expenseId", "personId"], unique = true)],

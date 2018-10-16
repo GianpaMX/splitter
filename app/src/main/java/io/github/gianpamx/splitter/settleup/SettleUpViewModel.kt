@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.settleup
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.model.Card
 import io.github.gianpamx.splitter.core.SettleUpUseCase
 import io.github.gianpamx.splitter.core.toAmount

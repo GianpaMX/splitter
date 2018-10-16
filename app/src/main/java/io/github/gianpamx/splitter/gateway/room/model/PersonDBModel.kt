@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.gateway.room.model
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "Person")
 data class PersonDBModel(

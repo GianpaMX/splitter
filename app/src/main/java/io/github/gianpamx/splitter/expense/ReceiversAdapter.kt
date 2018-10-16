@@ -1,8 +1,8 @@
 package io.github.gianpamx.splitter.expense
 
-import android.support.v7.recyclerview.extensions.AsyncListDiffer
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
@@ -63,7 +63,7 @@ class ReceiversAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     class NewCallback : DiffUtil.ItemCallback<ReceiverModel>() {
-        override fun areItemsTheSame(oldItem: ReceiverModel?, newItem: ReceiverModel?) = oldItem?.id == newItem?.id
-        override fun areContentsTheSame(oldItem: ReceiverModel?, newItem: ReceiverModel?) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: ReceiverModel, newItem: ReceiverModel) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ReceiverModel, newItem: ReceiverModel) = oldItem == newItem
     }
 }

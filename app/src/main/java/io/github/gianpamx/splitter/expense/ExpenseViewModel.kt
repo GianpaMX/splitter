@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.expense
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.core.model.Expense
 import io.github.gianpamx.splitter.core.model.Payer

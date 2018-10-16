@@ -1,8 +1,8 @@
 package io.github.gianpamx.splitter.groupexpenses
 
-import android.support.v7.recyclerview.extensions.AsyncListDiffer
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.gianpamx.splitter.R
@@ -47,7 +47,7 @@ class ExpensesAdapter(private val currencyFormat: NumberFormat) : RecyclerView.A
     }
 
     class NewCallback : DiffUtil.ItemCallback<ExpenseItem>() {
-        override fun areItemsTheSame(oldItem: ExpenseItem?, newItem: ExpenseItem?) = oldItem?.id == newItem?.id
-        override fun areContentsTheSame(oldItem: ExpenseItem?, newItem: ExpenseItem?) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: ExpenseItem, newItem: ExpenseItem) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ExpenseItem, newItem: ExpenseItem) = oldItem == newItem
     }
 }
