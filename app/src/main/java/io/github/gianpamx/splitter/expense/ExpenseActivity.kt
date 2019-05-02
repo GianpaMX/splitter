@@ -1,26 +1,23 @@
 package io.github.gianpamx.splitter.expense
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.expense.model.PayerModel
 import io.github.gianpamx.splitter.expense.model.ReceiverModel
 import kotlinx.android.synthetic.main.expense_activity.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import java.text.NumberFormat
 import javax.inject.Inject
 
@@ -48,10 +45,8 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     private val receiversAdapter = ReceiversAdapter()
 
     companion object {
-        fun newIntent(expenseId: Long, context: Context): Intent {
-            val intent = Intent(context, ExpenseActivity::class.java)
-            intent.putExtra(EXPENSE, expenseId)
-            return intent
+        fun newIntent(expenseId: Long, context: Context) = Intent(context, ExpenseActivity::class.java).apply {
+            putExtra(EXPENSE, expenseId)
         }
     }
 
@@ -69,9 +64,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
         expenseId = intent.getLongExtra(EXPENSE, 0L)
 
-        launch {
-            viewModel.loadExpense(expenseId)
-        }
+        viewModel.loadExpense(expenseId)
 
         viewModel.expense.observe(this, Observer {
             it?.let { titleEditText.setText(it.title) }
@@ -134,9 +127,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
 
     private val expenseTitleWatcher = object : TextWatcher {
         override fun afterTextChanged(title: Editable?) {
-            launch {
-                viewModel.save(title.toString(), expenseId)
-            }
+            viewModel.save(title.toString(), expenseId)
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -166,13 +157,8 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     }
 
     private fun exitExpense(exitFunction: (() -> Unit)? = null): Boolean {
-        launch(UI) {
-            async {
-                viewModel.exitExpense(expenseId)
-            }.await()
-
-            exitFunction?.invoke()
-        }
+        viewModel.exitExpense(expenseId)
+        exitFunction?.invoke()
         return true
     }
 
@@ -185,15 +171,11 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     }
 
     override fun onSave(payerModel: PayerModel) {
-        launch {
-            viewModel.save(payerModel, expenseId)
-        }
+        viewModel.save(payerModel, expenseId)
     }
 
     override fun onSave(receiverModel: ReceiverModel) {
-        launch {
-            viewModel.save(receiverModel, expenseId)
-        }
+        viewModel.save(receiverModel, expenseId)
     }
 
     override fun onCancel() {

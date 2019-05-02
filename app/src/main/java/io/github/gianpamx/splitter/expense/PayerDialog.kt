@@ -3,10 +3,10 @@ package io.github.gianpamx.splitter.expense
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.fragment.app.DialogFragment
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.expense.model.PayerModel
 
@@ -42,14 +42,10 @@ class PayerDialog : DialogFragment() {
     private fun Double?.hasDecimals() = (this ?: 0.0) % 1 > 0.0
 
     companion object {
-        fun newInstance(payerModel: PayerModel): PayerDialog {
-            val args = Bundle()
-            args.putParcelable(PAYER_MODEL, payerModel)
-
-            val payerDialog = PayerDialog()
-            payerDialog.arguments = args
-
-            return payerDialog
+        fun newInstance(payerModel: PayerModel) = PayerDialog().apply {
+            arguments = Bundle().apply {
+                putParcelable(PAYER_MODEL, payerModel)
+            }
         }
     }
 
@@ -68,7 +64,7 @@ class PayerDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(activity)
             .setTitle(R.string.expense_payer_dialog_title)
             .setView(view)
-            .setPositiveButton(R.string.expense_payer_dialog_save_button, { _, _ ->
+            .setPositiveButton(R.string.expense_payer_dialog_save_button) { _, _ ->
                 dialog.currentFocus?.hideKeyBoard()
 
                 payerModel?.apply {
@@ -82,12 +78,12 @@ class PayerDialog : DialogFragment() {
                     }
                     listener?.onSave(this)
                 }
-            })
-            .setNegativeButton(R.string.expense_payer_dialog_cancel_button, { _, _ ->
+            }
+            .setNegativeButton(R.string.expense_payer_dialog_cancel_button) { _, _ ->
                 dialog.currentFocus?.hideKeyBoard()
 
                 listener?.onCancel()
-            })
+            }
             .create()
 
     interface Listener {

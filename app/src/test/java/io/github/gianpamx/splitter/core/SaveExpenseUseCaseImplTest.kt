@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.core
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.verify
 import io.github.gianpamx.splitter.core.model.Expense
 import org.junit.Before
 import org.junit.Test

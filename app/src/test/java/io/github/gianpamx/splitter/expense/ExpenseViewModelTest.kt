@@ -1,14 +1,21 @@
 package io.github.gianpamx.splitter.expense
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.core.model.Expense
 import io.github.gianpamx.splitter.core.model.Payer
 import io.github.gianpamx.splitter.expense.model.PayerModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.collection.IsIn
 import org.hamcrest.core.IsInstanceOf
+import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -19,11 +26,14 @@ import org.mockito.junit.MockitoJUnitRunner
 
 private const val anyExpenseId = 1L
 
+@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class ExpenseViewModelTest {
     @Rule
     @JvmField
     val instantExecutor = InstantTaskExecutorRule()
+
+    private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @Mock
     private lateinit var savePaymentUseCase: SavePaymentUseCase
@@ -50,6 +60,8 @@ class ExpenseViewModelTest {
 
     @Before
     fun setUp() {
+        Dispatchers.setMain(mainThreadSurrogate)
+
         whenever(getExpenseUseCase.invoke(any())).thenReturn(Expense())
 
         expenseViewModel = ExpenseViewModel(
@@ -63,8 +75,14 @@ class ExpenseViewModelTest {
         )
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain() // reset main dispatcher to the original Main dispatcher
+        mainThreadSurrogate.close()
+    }
+
     @Test
-    fun saveNewPayer() {
+    fun saveNewPayer() = runBlocking<Unit> {
         val expectedPayer = PayerModel(name = "ANY_NAME", amount = 0.1 + 0.2)
 
         expenseViewModel.save(expectedPayer, anyExpenseId)
@@ -73,7 +91,7 @@ class ExpenseViewModelTest {
     }
 
     @Test
-    fun errorSavingAPayer() {
+    fun errorSavingAPayer() = runBlocking {
         whenever(savePaymentUseCase.invoke(any(), any(), any())).thenThrow(Exception("ANY_EXCEPTION"))
 
         expenseViewModel.save(PayerModel(), anyExpenseId)
@@ -82,7 +100,7 @@ class ExpenseViewModelTest {
     }
 
     @Test
-    fun onNewPayerInserted() {
+    fun onNewPayerInserted() = runBlocking {
         argumentCaptor<(List<Payer>, Int) -> Unit>().apply {
             whenever(observePayersUseCase.invoke(any(), capture())).then {
                 firstValue.invoke(listOf(Payer(cents = 12345, personId = 1)), 12345)
@@ -95,7 +113,7 @@ class ExpenseViewModelTest {
     }
 
     @Test
-    fun point1pluspoint2equalspoint3() {
+    fun point1pluspoint2equalspoint3() = runBlocking {
         argumentCaptor<(List<Payer>, Int) -> Unit>().apply {
             whenever(observePayersUseCase.invoke(any(), capture())).then {
                 firstValue.invoke(listOf(Payer(cents = 10), Payer(cents = 20)), 30)
@@ -108,7 +126,7 @@ class ExpenseViewModelTest {
     }
 
     @Test
-    fun createExpense() {
+    fun createExpense() = runBlocking<Unit> {
         expenseViewModel.save("ANY TITLE", anyExpenseId)
 
         verify(saveExpenseUseCase).invoke(any())

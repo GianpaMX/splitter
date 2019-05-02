@@ -1,21 +1,18 @@
 package io.github.gianpamx.splitter.groupexpenses
 
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.Menu
-import android.view.MenuItem
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
 import io.github.gianpamx.splitter.expense.ExpenseActivity
 import io.github.gianpamx.splitter.settleup.SettleUpActivity
 import kotlinx.android.synthetic.main.group_expenses_activity.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import java.text.NumberFormat
 import javax.inject.Inject
 
@@ -53,13 +50,20 @@ class GroupExpensesActivity : AppCompatActivity() {
             it?.let { supportActionBar?.subtitle = currencyFormat.format(it) }
         })
 
-        addExpenseFAB.setOnClickListener {
-            addExpenseFAB.hide()
-            launch(UI) {
-                val expenseId = async { viewModel.createExpense() }.await()
+        viewModel.fabVisivility.observe(this, Observer {
+            if (it) {
                 addExpenseFAB.show()
-                startActivity(ExpenseActivity.newIntent(expenseId, this@GroupExpensesActivity))
+            } else {
+                addExpenseFAB.hide()
             }
+        })
+
+        viewModel.newExpenseId.observe(this, Observer {
+            startActivity(ExpenseActivity.newIntent(it, this))
+        })
+
+        addExpenseFAB.setOnClickListener {
+            viewModel.createExpense()
         }
     }
 

@@ -2,13 +2,13 @@ package io.github.gianpamx.splitter.settleup
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.github.gianpamx.splitter.core.model.Card
+import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.SettleUpUseCase
+import io.github.gianpamx.splitter.core.model.Card
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.settleup.model.CardModel
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettleUpViewModel @Inject constructor(settleUpUseCase: SettleUpUseCase) : ViewModel() {
@@ -16,8 +16,8 @@ class SettleUpViewModel @Inject constructor(settleUpUseCase: SettleUpUseCase) : 
     val total = MutableLiveData<Double>()
 
     init {
-        launch(UI) {
-            val listOfCards = async { settleUpUseCase.invoke().map { it.toCardModel() } }.await()
+        viewModelScope.launch(Dispatchers.IO) {
+            val listOfCards = settleUpUseCase.invoke().map { it.toCardModel() }
 
             cards.postValue(listOfCards)
             total.postValue(listOfCards.sumByDouble { it.paid })

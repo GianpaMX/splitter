@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.core
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import io.github.gianpamx.splitter.core.model.Payer
 import org.junit.Test
 import org.junit.runner.RunWith

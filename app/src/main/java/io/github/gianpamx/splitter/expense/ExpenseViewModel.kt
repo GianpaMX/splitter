@@ -2,6 +2,7 @@ package io.github.gianpamx.splitter.expense
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.*
 import io.github.gianpamx.splitter.core.model.Expense
 import io.github.gianpamx.splitter.core.model.Payer
@@ -9,6 +10,8 @@ import io.github.gianpamx.splitter.core.model.Person
 import io.github.gianpamx.splitter.expense.model.ExpenseModel
 import io.github.gianpamx.splitter.expense.model.PayerModel
 import io.github.gianpamx.splitter.expense.model.ReceiverModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExpenseViewModel @Inject constructor(
@@ -26,12 +29,12 @@ class ExpenseViewModel @Inject constructor(
     val total = MutableLiveData<Double>()
     val error = MutableLiveData<Exception>()
 
-    fun loadExpense(expenseId: Long) {
+    fun loadExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.Default) {
         expense.postValue(getExpenseUseCase.invoke(expenseId).toExpenseModel())
 
         observePayersUseCase.invoke(expenseId) { payers, total ->
-            this.payers.postValue(payers.map { it.toPayerModel() })
-            this.total.postValue(total.toAmount())
+            this@ExpenseViewModel.payers.postValue(payers.map { it.toPayerModel() })
+            this@ExpenseViewModel.total.postValue(total.toAmount())
         }
 
         observeReceiversUseCase.invoke(expenseId) {
@@ -39,7 +42,8 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun save(payerModel: PayerModel, expenseId: Long) {
+
+    fun save(payerModel: PayerModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
         try {
             savePaymentUseCase.invoke(payerModel.amount.toCents(), payerModel.toPerson(), expenseId)
         } catch (e: Exception) {
@@ -47,7 +51,7 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun save(receiverModel: ReceiverModel, expenseId: Long) {
+    fun save(receiverModel: ReceiverModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
         try {
             saveReceiverUseCase.invoke(receiverModel.isChecked, receiverModel.toPerson(), expenseId)
         } catch (e: Exception) {
@@ -55,11 +59,11 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun exitExpense(expenseId: Long) {
+    fun exitExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
         keepOrDeleteExpenseUseCase.invoke(expenseId)
     }
 
-    fun save(title: String, expenseId: Long) {
+    fun save(title: String, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
         val expense = getExpenseUseCase.invoke(expenseId)
         expense.title = title
         saveExpenseUseCase.invoke(expense)

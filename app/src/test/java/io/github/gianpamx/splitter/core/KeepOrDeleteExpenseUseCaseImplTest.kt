@@ -1,9 +1,9 @@
 package io.github.gianpamx.splitter.core
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.github.gianpamx.splitter.core.model.Expense
 import io.github.gianpamx.splitter.core.model.Payment
 import io.github.gianpamx.splitter.core.model.Person
