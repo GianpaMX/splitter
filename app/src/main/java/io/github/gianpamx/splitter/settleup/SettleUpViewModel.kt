@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.SettleUpUseCase
-import io.github.gianpamx.splitter.core.model.Card
+import io.github.gianpamx.splitter.core.entity.Card
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.settleup.model.CardModel
 import kotlinx.coroutines.Dispatchers

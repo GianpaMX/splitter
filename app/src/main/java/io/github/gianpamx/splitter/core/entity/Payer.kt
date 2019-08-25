@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.core.model
+package io.github.gianpamx.splitter.core.entity
 
 data class Payer(
         var personId: Long = 0,

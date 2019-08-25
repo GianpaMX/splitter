@@ -2,7 +2,7 @@ package io.github.gianpamx.splitter.core
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
-import io.github.gianpamx.splitter.core.model.Expense
+import io.github.gianpamx.splitter.core.entity.Expense
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

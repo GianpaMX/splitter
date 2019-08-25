@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.core
 
-import io.github.gianpamx.splitter.core.model.Payer
+import io.github.gianpamx.splitter.core.entity.Payer
 
 interface ObservePayersUseCase {
 

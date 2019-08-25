@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.core
 
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Person
 
 interface ObserveReceiversUseCase {
     fun invoke(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit)

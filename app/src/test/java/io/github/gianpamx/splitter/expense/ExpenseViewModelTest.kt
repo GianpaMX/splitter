@@ -3,8 +3,8 @@ package io.github.gianpamx.splitter.expense
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.*
 import io.github.gianpamx.splitter.core.*
-import io.github.gianpamx.splitter.core.model.Expense
-import io.github.gianpamx.splitter.core.model.Payer
+import io.github.gianpamx.splitter.core.entity.Expense
+import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.expense.model.PayerModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

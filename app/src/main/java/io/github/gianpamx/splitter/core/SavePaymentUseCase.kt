@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.core
 
-import io.github.gianpamx.splitter.core.model.Payment
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Payment
+import io.github.gianpamx.splitter.core.entity.Person
 
 interface SavePaymentUseCase {
     @Throws(Exception::class)

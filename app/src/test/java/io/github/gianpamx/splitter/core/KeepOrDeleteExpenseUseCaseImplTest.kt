@@ -4,9 +4,9 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.gianpamx.splitter.core.model.Expense
-import io.github.gianpamx.splitter.core.model.Payment
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Expense
+import io.github.gianpamx.splitter.core.entity.Payment
+import io.github.gianpamx.splitter.core.entity.Person
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

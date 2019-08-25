@@ -1,10 +1,10 @@
 package io.github.gianpamx.splitter.gateway.room
 
 import com.nhaarman.mockitokotlin2.*
-import io.github.gianpamx.splitter.core.model.Expense
-import io.github.gianpamx.splitter.core.model.Payer
-import io.github.gianpamx.splitter.core.model.Payment
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Expense
+import io.github.gianpamx.splitter.core.entity.Payer
+import io.github.gianpamx.splitter.core.entity.Payment
+import io.github.gianpamx.splitter.core.entity.Person
 import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel

@@ -1,7 +1,7 @@
 package io.github.gianpamx.splitter.core
 
 import com.nhaarman.mockitokotlin2.*
-import io.github.gianpamx.splitter.core.model.Payer
+import io.github.gianpamx.splitter.core.entity.Payer
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock

@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.core.model
+package io.github.gianpamx.splitter.core.entity
 
 data class Expense(
         var id: Long = 0,

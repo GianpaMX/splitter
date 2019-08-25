@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.ObserveExpensesUseCase
 import io.github.gianpamx.splitter.core.SaveExpenseUseCase
-import io.github.gianpamx.splitter.core.model.Expense
+import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
 import kotlinx.coroutines.Dispatchers

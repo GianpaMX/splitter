@@ -3,9 +3,9 @@ package io.github.gianpamx.splitter.core
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.gianpamx.splitter.core.model.Expense
-import io.github.gianpamx.splitter.core.model.Payment
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Expense
+import io.github.gianpamx.splitter.core.entity.Payment
+import io.github.gianpamx.splitter.core.entity.Person
 import org.hamcrest.core.IsEqual
 import org.junit.Assert.assertThat
 import org.junit.Before

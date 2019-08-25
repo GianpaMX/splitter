@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.*
-import io.github.gianpamx.splitter.core.model.Expense
-import io.github.gianpamx.splitter.core.model.Payer
-import io.github.gianpamx.splitter.core.model.Person
+import io.github.gianpamx.splitter.core.entity.Expense
+import io.github.gianpamx.splitter.core.entity.Payer
+import io.github.gianpamx.splitter.core.entity.Person
 import io.github.gianpamx.splitter.expense.model.ExpenseModel
 import io.github.gianpamx.splitter.expense.model.PayerModel
 import io.github.gianpamx.splitter.expense.model.ReceiverModel
