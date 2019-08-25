@@ -1,11 +1,11 @@
 package io.github.gianpamx.splitter.groupexpenses
 
 import android.content.Intent
-import androidx.test.InstrumentationRegistry
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.rule.IntentsTestRule
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn
 import com.schibsted.spain.barista.interaction.BaristaListInteractions.clickListItem
 import com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep

@@ -1,7 +1,7 @@
 apply plugin: 'com.github.triplet.play'
 
 play {
-    jsonFile = file(playJsonFile)
+    serviceAccountCredentials = file(playJsonFile)
     track = 'beta'
-    untrackOld = true
+    defaultToAppBundles = true
 }

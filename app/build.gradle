@@ -99,13 +99,16 @@ dependencies {
     testImplementation libraries.testing.mockitoKotlin2
 
 
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation libraries.testing.mockitoAndroid
     androidTestImplementation libraries.testing.mockitoKotlin2
     androidTestImplementation libraries.testing.rules
     androidTestImplementation libraries.testing.runner
     androidTestImplementation libraries.testing.espresso
+    androidTestImplementation libraries.testing.espressoIntents
     androidTestImplementation(libraries.testing.barista) {
-        exclude group: "com.android.support"
-        exclude group: "org.jetbrains.kotlin"
+        exclude group: 'com.android.support'
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'androidx.test.espresso', module: 'espresso-intents'
     }
 }
