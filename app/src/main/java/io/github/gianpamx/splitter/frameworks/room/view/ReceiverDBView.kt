@@ -1,7 +1,7 @@
-package io.github.gianpamx.splitter.gateway.room.view
+package io.github.gianpamx.splitter.frameworks.room.view
 
 import androidx.room.ColumnInfo
-import io.github.gianpamx.splitter.gateway.room.FALSE
+import io.github.gianpamx.splitter.frameworks.room.FALSE
 
 data class ReceiverDBView(
         @ColumnInfo(name = "id")

@@ -1,7 +1,8 @@
-package io.github.gianpamx.splitter.core
+package io.github.gianpamx.splitter.app
 
 import dagger.Module
 import dagger.Provides
+import io.github.gianpamx.splitter.core.*
 
 
 @Module

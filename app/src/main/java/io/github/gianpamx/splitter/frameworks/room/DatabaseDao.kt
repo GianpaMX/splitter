@@ -1,12 +1,12 @@
-package io.github.gianpamx.splitter.gateway.room
+package io.github.gianpamx.splitter.frameworks.room
 
 import androidx.room.*
-import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
-import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
-import io.github.gianpamx.splitter.gateway.room.model.PersonDBModel
-import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
-import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
-import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
+import io.github.gianpamx.splitter.frameworks.room.model.ExpenseDBModel
+import io.github.gianpamx.splitter.frameworks.room.model.PaymentDBModel
+import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
+import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
+import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
+import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.Flowable
 
 const val TRUE = 1

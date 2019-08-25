@@ -1,15 +1,15 @@
-package io.github.gianpamx.splitter.gateway.room
+package io.github.gianpamx.splitter.frameworks.room
 
 import com.nhaarman.mockitokotlin2.*
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.core.entity.Payment
 import io.github.gianpamx.splitter.core.entity.Person
-import io.github.gianpamx.splitter.gateway.room.model.ExpenseDBModel
-import io.github.gianpamx.splitter.gateway.room.model.PaymentDBModel
-import io.github.gianpamx.splitter.gateway.room.model.ReceiverDBModel
-import io.github.gianpamx.splitter.gateway.room.view.PayerDBView
-import io.github.gianpamx.splitter.gateway.room.view.ReceiverDBView
+import io.github.gianpamx.splitter.frameworks.room.model.ExpenseDBModel
+import io.github.gianpamx.splitter.frameworks.room.model.PaymentDBModel
+import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
+import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
+import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.internal.operators.flowable.FlowableJust
 import org.junit.Before
 import org.junit.Test

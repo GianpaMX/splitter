@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import io.github.gianpamx.splitter.core.CoreModule
 import java.text.NumberFormat
 import javax.inject.Singleton
 

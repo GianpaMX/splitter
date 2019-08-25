@@ -4,7 +4,6 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
-import io.github.gianpamx.splitter.gateway.room.RoomModule
 import javax.inject.Singleton
 
 

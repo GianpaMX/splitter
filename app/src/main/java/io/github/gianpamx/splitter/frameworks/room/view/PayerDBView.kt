@@ -1,4 +1,4 @@
-package io.github.gianpamx.splitter.gateway.room.view
+package io.github.gianpamx.splitter.frameworks.room.view
 
 import androidx.room.ColumnInfo
 

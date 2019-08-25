@@ -5,9 +5,9 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import io.github.gianpamx.splitter.core.PersistenceGateway
-import io.github.gianpamx.splitter.gateway.room.AppDatabase
-import io.github.gianpamx.splitter.gateway.room.DatabaseDao
-import io.github.gianpamx.splitter.gateway.room.RoomPersistence
+import io.github.gianpamx.splitter.frameworks.room.AppDatabase
+import io.github.gianpamx.splitter.frameworks.room.DatabaseDao
+import io.github.gianpamx.splitter.frameworks.room.RoomPersistence
 import javax.inject.Singleton
 
 
