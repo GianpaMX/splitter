@@ -65,6 +65,11 @@ ext {
                     converter: "com.squareup.retrofit2:converter-gson:$retrofit_version",
                     testing  : "com.squareup.retrofit2:retrofit-mock:$retrofit_version",
             ],
+            rx        : [
+                    kotlin : 'io.reactivex.rxjava2:rxkotlin:2.4.0',
+                    java   : 'io.reactivex.rxjava2:rxjava:2.2.11',
+                    android: 'io.reactivex.rxjava2:rxandroid:2.1.1'
+            ],
             testing   : [
                     junit          : 'junit:junit:4.12',
                     hamcrest       : 'org.hamcrest:hamcrest-library:1.3',

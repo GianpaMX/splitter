@@ -1,6 +1,6 @@
 package io.github.gianpamx.splitter.frameworks.room
 
-import io.github.gianpamx.splitter.core.*
+import io.github.gianpamx.splitter.core.PersistenceGateway
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.core.entity.Payment
@@ -11,6 +11,7 @@ import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
+import io.reactivex.Single
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
     override fun updatePerson(person: Person) {
@@ -29,6 +30,9 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
             databaseDao.findPayments(expenseId).map {
                 it.toPayment(databaseDao.findPerson(it.personId).toPerson())
             }
+
+    override fun observePayments(expenseId: Long) =
+            Single.just(findPayments(expenseId))
 
     override fun createPayment(payment: Payment): Payment {
         databaseDao.insert(payment.toPaymentDBModel())
@@ -67,6 +71,9 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
             observer.invoke(it.map { it.toExpense() })
         }
     }
+
+    override fun observeExpenses() = databaseDao.observeExpenses()
+            .map { dbExpenses -> dbExpenses.map { it.toExpense() } }
 
     override fun findExpense(expenseId: Long) =
             databaseDao.findExpense(expenseId)?.toExpense()

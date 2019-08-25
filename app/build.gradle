@@ -92,6 +92,10 @@ dependencies {
     implementation libraries.retrofit.converter
     testImplementation libraries.retrofit.testing
 
+    implementation libraries.rx.java
+    implementation libraries.rx.kotlin
+    implementation libraries.rx.android
+
 
     testImplementation libraries.testing.junit
     testImplementation libraries.testing.hamcrest

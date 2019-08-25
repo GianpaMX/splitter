@@ -32,8 +32,8 @@ class CoreModule {
             KeepOrDeleteExpenseUseCaseImpl(persistenceGateway)
 
     @Provides
-    fun provideObserveExpensesUseCase(persistenceGateway: PersistenceGateway): ObserveExpensesUseCase =
-            ObserveExpensesUseCaseImpl(persistenceGateway)
+    fun provideObserveExpensesUseCase(persistenceGateway: PersistenceGateway): ObserveExpenses =
+            ObserveExpenses(persistenceGateway)
 
     @Provides
     fun provideGetExpenseUseCase(persistenceGateway: PersistenceGateway): GetExpenseUseCase =

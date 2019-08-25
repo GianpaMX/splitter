@@ -3,11 +3,14 @@ package io.github.gianpamx.splitter.groupexpenses
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.gianpamx.splitter.core.ObserveExpensesUseCase
+import io.github.gianpamx.splitter.core.ObserveExpenses
 import io.github.gianpamx.splitter.core.SaveExpenseUseCase
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -15,14 +18,19 @@ import javax.inject.Inject
 
 class GroupExpensesViewModel @Inject constructor(
         private val saveExpenseUseCase: SaveExpenseUseCase,
-        observeExpensesUseCase: ObserveExpensesUseCase
+        observeExpenses: ObserveExpenses
 ) : ViewModel() {
     val viewState = MutableLiveData<ExpensesViewState>()
 
+    private val compositeDisposable = CompositeDisposable()
+
     init {
-        observeExpensesUseCase.invoke { expenses, total ->
-            viewState.postValue(ExpensesViewState.Ready(expenses.map { it.toExpenseItem() }, total.toAmount()))
-        }
+        compositeDisposable.add(observeExpenses()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { it ->
+                    viewState.value = it.toViewState()
+                })
     }
 
     fun createExpense() {
@@ -34,10 +42,19 @@ class GroupExpensesViewModel @Inject constructor(
             viewState.value = ExpensesViewState.NewExpense(expense.id)
         }
     }
+
+    override fun onCleared() {
+        compositeDisposable.clear()
+    }
 }
 
-private fun Pair<Expense, Int>.toExpenseItem() = ExpenseItem(
-        id = first.id,
-        title = first.title,
-        total = second.toAmount()
+private fun ObserveExpenses.Output.toViewState() = ExpensesViewState.Ready(
+        expenses = this.expenses.map { it.toExpenseItem() },
+        total = this.total.toAmount()
+)
+
+private fun ObserveExpenses.TotalExpense.toExpenseItem() = ExpenseItem(
+        id = this.id,
+        title = this.title,
+        total = this.total.toAmount()
 )
