@@ -42,24 +42,14 @@ class GroupExpensesActivity : AppCompatActivity() {
         expenseRecyclerView.layoutManager = LinearLayoutManager(this)
         expenseRecyclerView.adapter = expensesAdapter
 
-        viewModel.expenses.observe(this, Observer {
-            it?.let { expensesAdapter.replaceExpenses(it) }
-        })
-
-        viewModel.total.observe(this, Observer {
-            it?.let { supportActionBar?.subtitle = currencyFormat.format(it) }
-        })
-
-        viewModel.fabVisivility.observe(this, Observer {
-            if (it) {
-                addExpenseFAB.show()
-            } else {
-                addExpenseFAB.hide()
+        viewModel.viewState.observe(this, Observer {
+            when (it) {
+                is ExpensesViewState.Ready -> {
+                    expensesAdapter.replaceExpenses(it.expenses)
+                    supportActionBar?.subtitle = currencyFormat.format(it.total)
+                }
+                is ExpensesViewState.NewExpense -> startActivity(ExpenseActivity.newIntent(it.id, this))
             }
-        })
-
-        viewModel.newExpenseId.observe(this, Observer {
-            startActivity(ExpenseActivity.newIntent(it, this))
         })
 
         addExpenseFAB.setOnClickListener {

@@ -17,27 +17,21 @@ class GroupExpensesViewModel @Inject constructor(
         private val saveExpenseUseCase: SaveExpenseUseCase,
         observeExpensesUseCase: ObserveExpensesUseCase
 ) : ViewModel() {
-    val expenses = MutableLiveData<List<ExpenseItem>>()
-    val total = MutableLiveData<Double>()
-    val fabVisivility = MutableLiveData<Boolean>(true)
-    val newExpenseId = MutableLiveData<Long>()
+    val viewState = MutableLiveData<ExpensesViewState>()
 
     init {
         observeExpensesUseCase.invoke { expenses, total ->
-            this.expenses.postValue(expenses.map { it.toExpenseItem() })
-            this.total.postValue(total.toAmount())
+            viewState.postValue(ExpensesViewState.Ready(expenses.map { it.toExpenseItem() }, total.toAmount()))
         }
     }
 
     fun createExpense() {
-        fabVisivility.value = false
         viewModelScope.launch {
             val expense = withContext(Dispatchers.IO) {
                 saveExpenseUseCase.invoke(Expense())
             }
 
-            fabVisivility.value = true
-            newExpenseId.value = expense.id
+            viewState.value = ExpensesViewState.NewExpense(expense.id)
         }
     }
 }
