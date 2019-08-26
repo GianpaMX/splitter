@@ -4,6 +4,7 @@ import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.core.entity.Payment
 import io.github.gianpamx.splitter.core.entity.Person
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -24,8 +25,12 @@ interface PersistenceGateway {
 
     fun observeExpenses(observer: (List<Expense>) -> Unit)
     fun observeExpenses(): Flowable<List<Expense>>
+    @Deprecated("refactor: Rx")
     fun createExpense(expense: Expense): Long
+    fun createExpenseSingle(expense: Expense): Single<Long>
+    @Deprecated("refactor: Rx")
     fun updateExpense(expense: Expense)
+    fun updateExpenseCompletable(expense: Expense) : Completable
     fun findExpense(expenseId: Long): Expense?
     fun findExpensesByPersonId(personId: Long): List<Expense>
     fun deleteExpense(expenseId: Long)

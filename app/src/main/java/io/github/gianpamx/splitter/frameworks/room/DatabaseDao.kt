@@ -7,7 +7,9 @@ import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
+import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 const val TRUE = 1
 const val FALSE = 0
@@ -63,8 +65,14 @@ interface DatabaseDao {
     @Insert
     fun insert(expense: ExpenseDBModel): Long
 
+    @Insert
+    fun insertSingle(expense: ExpenseDBModel): Single<Long>
+
     @Update
     fun update(expense: ExpenseDBModel)
+
+    @Update
+    fun updateCompletable(expense: ExpenseDBModel) : Completable
 
     @Delete
     fun deleteExpense(expense: ExpenseDBModel)

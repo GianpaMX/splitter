@@ -2,22 +2,19 @@ package io.github.gianpamx.splitter.groupexpenses
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.core.ObserveExpenses
-import io.github.gianpamx.splitter.core.SaveExpenseUseCase
+import io.github.gianpamx.splitter.core.SaveExpense
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GroupExpensesViewModel @Inject constructor(
-        private val saveExpenseUseCase: SaveExpenseUseCase,
+        private val saveExpense: SaveExpense,
         observeExpenses: ObserveExpenses
 ) : ViewModel() {
     val viewState = MutableLiveData<ExpensesViewState>()
@@ -34,13 +31,12 @@ class GroupExpensesViewModel @Inject constructor(
     }
 
     fun createExpense() {
-        viewModelScope.launch {
-            val expense = withContext(Dispatchers.IO) {
-                saveExpenseUseCase.invoke(Expense())
-            }
-
-            viewState.value = ExpensesViewState.NewExpense(expense.id)
-        }
+        compositeDisposable.add(saveExpense(Expense())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Consumer {
+            viewState.value = ExpensesViewState.NewExpense(it.id)
+        }))
     }
 
     override fun onCleared() {

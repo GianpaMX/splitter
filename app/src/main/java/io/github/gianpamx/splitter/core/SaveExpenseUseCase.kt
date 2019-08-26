@@ -2,7 +2,9 @@ package io.github.gianpamx.splitter.core
 
 import io.github.gianpamx.splitter.core.entity.Expense
 
+@Deprecated("refactor: Rx")
 interface SaveExpenseUseCase {
+    @Deprecated("refactor: Rx")
     fun invoke(expense: Expense): Expense
 }
 

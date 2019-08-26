@@ -28,6 +28,10 @@ class CoreModule {
             SaveExpenseUseCaseImpl(persistenceGateway)
 
     @Provides
+    fun provideCreateExpense(persistenceGateway: PersistenceGateway) =
+            SaveExpense(persistenceGateway)
+
+    @Provides
     fun provideKeepOrDeleteExpenseUseCase(persistenceGateway: PersistenceGateway): KeepOrDeleteExpenseUseCase =
             KeepOrDeleteExpenseUseCaseImpl(persistenceGateway)
 

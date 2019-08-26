@@ -83,9 +83,15 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     override fun createExpense(expense: Expense) =
             databaseDao.insert(expense.toExpenseDBModel())
 
+    override fun createExpenseSingle(expense: Expense) =
+            databaseDao.insertSingle(expense.toExpenseDBModel())
+
     override fun updateExpense(expense: Expense) {
         databaseDao.update(expense.toExpenseDBModel())
     }
+
+    override fun updateExpenseCompletable(expense: Expense) =
+            databaseDao.updateCompletable(expense.toExpenseDBModel())
 
     override fun deleteExpense(expenseId: Long) {
         databaseDao.findExpense(expenseId)?.let {
