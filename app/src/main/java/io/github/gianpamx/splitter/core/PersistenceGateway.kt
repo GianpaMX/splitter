@@ -7,6 +7,7 @@ import io.github.gianpamx.splitter.core.entity.Person
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Single
 
 interface PersistenceGateway {
@@ -23,6 +24,7 @@ interface PersistenceGateway {
   fun findPaymentsByPersonId(personId: Long): List<Payment>
 
   fun observePayments(expenseId: Long, observer: (List<Payer>) -> Unit)
+  fun getExpensePayers(expenseId: Long): Observable<List<Payer>>
 
   fun observeExpenses(observer: (List<Expense>) -> Unit)
   fun observeExpenses(): Flowable<List<Expense>>

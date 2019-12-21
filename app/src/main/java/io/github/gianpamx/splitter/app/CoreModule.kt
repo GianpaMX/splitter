@@ -5,6 +5,7 @@ import dagger.Provides
 import io.github.gianpamx.splitter.core.GetExpense
 import io.github.gianpamx.splitter.core.GetExpenseUseCase
 import io.github.gianpamx.splitter.core.GetExpenseUseCaseImpl
+import io.github.gianpamx.splitter.core.GetPayers
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCaseImpl
 import io.github.gianpamx.splitter.core.ObserveExpenses
@@ -63,6 +64,9 @@ class CoreModule {
 
   @Provides
   fun provideGetExpense(persistenceGateway: PersistenceGateway) = GetExpense(persistenceGateway)
+
+  @Provides
+  fun provideGetPayers(persistenceGateway: PersistenceGateway) = GetPayers(persistenceGateway)
 
   @Provides
   fun provideSettleUpUseCase(persistenceGateway: PersistenceGateway): SettleUpUseCase =

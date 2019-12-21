@@ -14,6 +14,7 @@ import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Single
 
 const val TRUE = 1
@@ -24,7 +25,7 @@ interface DatabaseDao {
   @Query("SELECT Person.id, Person.name, Payment.cents " +
       "FROM Person " +
       "LEFT JOIN Payment ON(Payment.personId = Person.id AND Payment.expenseId = :expenseId)")
-  fun observePayments(expenseId: Long): Flowable<List<PayerDBView>>
+  fun observePayments(expenseId: Long): Observable<List<PayerDBView>>
 
   @Query("SELECT * FROM Payment WHERE personId = :personId AND expenseId = :expenseId")
   fun findPayment(personId: Long, expenseId: Long): PaymentDBModel?

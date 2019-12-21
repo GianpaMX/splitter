@@ -1,6 +1,10 @@
 package io.github.gianpamx.splitter.frameworks.room
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.core.entity.Payment
@@ -10,6 +14,7 @@ import io.github.gianpamx.splitter.frameworks.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
+import io.reactivex.Observable
 import io.reactivex.internal.operators.flowable.FlowableJust
 import org.junit.Before
 import org.junit.Test
@@ -24,124 +29,126 @@ private val anyPayment = Payment(cents = 12345, expenseId = anyExpenseId, person
 @RunWith(MockitoJUnitRunner::class)
 class RoomPersistenceTest {
 
-    @Mock
-    private lateinit var databaseDao: DatabaseDao
+  @Mock
+  private lateinit var databaseDao: DatabaseDao
 
-    private lateinit var roomPersistence: RoomPersistence
+  private lateinit var roomPersistence: RoomPersistence
 
-    @Before
-    fun setUp() {
-        roomPersistence = RoomPersistence(databaseDao)
-    }
+  @Before
+  fun setUp() {
+    roomPersistence = RoomPersistence(databaseDao)
+  }
 
-    @Test
-    fun create() {
+  @Test
+  fun create() {
 
-        roomPersistence.createPayment(anyPayment)
+    roomPersistence.createPayment(anyPayment)
 
-        verify(databaseDao).insert(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
-    }
+    verify(databaseDao).insert(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
+  }
 
-    @Test
-    fun update() {
-        val expectedPayer = anyPayment
+  @Test
+  fun update() {
+    val expectedPayer = anyPayment
 
-        roomPersistence.updatePayment(expectedPayer)
+    roomPersistence.updatePayment(expectedPayer)
 
-        verify(databaseDao).update(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
-    }
+    verify(databaseDao).update(eq(PaymentDBModel(cents = anyPayment.cents, expenseId = anyPayment.expenseId, personId = anyPerson.id)))
+  }
 
-    @Test
-    fun observePayers() {
-        val observer = mock<(List<Payer>) -> Unit>()
-        whenever(databaseDao.observePayments(any())).thenReturn(FlowableJust(listOf(PayerDBView(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
+  @Test
+  fun observePayers() {
+    val observer = mock<(List<Payer>) -> Unit>()
+    whenever(databaseDao.observePayments(any())).thenReturn(Observable.just(listOf(PayerDBView(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
 
-        roomPersistence.observePayments(anyPayment.expenseId, observer)
+    roomPersistence.observePayments(anyPayment.expenseId, observer)
 
-        verify(observer).invoke(eq(listOf(Payer(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
-    }
+    verify(observer).invoke(eq(listOf(Payer(personId = anyPerson.id, name = anyPerson.name, cents = 12345))))
+  }
 
-    @Test
-    fun observeReceivers() {
-        val observer = mock<(List<Pair<Person, Boolean>>) -> Unit>()
-        whenever(databaseDao.observeReceivers(any())).thenReturn(FlowableJust(listOf(ReceiverDBView(personId = anyPerson.id, name = anyPerson.name, checked = FALSE))))
+  @Test
+  fun observeReceivers() {
+    val observer = mock<(List<Pair<Person, Boolean>>) -> Unit>()
+    whenever(databaseDao.observeReceivers(any())).thenReturn(FlowableJust(listOf(ReceiverDBView(personId = anyPerson.id,
+        name = anyPerson.name,
+        checked = FALSE))))
 
-        roomPersistence.observeReceivers(anyPayment.expenseId, observer)
+    roomPersistence.observeReceivers(anyPayment.expenseId, observer)
 
-        verify(observer).invoke(eq(listOf(Pair(Person(id = anyPerson.id, name = anyPerson.name), false))))
-    }
+    verify(observer).invoke(eq(listOf(Pair(Person(id = anyPerson.id, name = anyPerson.name), false))))
+  }
 
-    @Test
-    fun deletePayment() {
-        whenever(databaseDao.findPayment(any(), any())).thenReturn(PaymentDBModel())
+  @Test
+  fun deletePayment() {
+    whenever(databaseDao.findPayment(any(), any())).thenReturn(PaymentDBModel())
 
-        roomPersistence.deletePayment(anyPayment.expenseId, anyPerson.id)
+    roomPersistence.deletePayment(anyPayment.expenseId, anyPerson.id)
 
-        verify(databaseDao).deletePayment(any())
-    }
+    verify(databaseDao).deletePayment(any())
+  }
 
-    @Test
-    fun findReceiver() {
-        roomPersistence.findReceiver(anyPerson.id, anyExpenseId)
+  @Test
+  fun findReceiver() {
+    roomPersistence.findReceiver(anyPerson.id, anyExpenseId)
 
-        verify(databaseDao).findReceiver(any(), any())
-    }
+    verify(databaseDao).findReceiver(any(), any())
+  }
 
-    @Test
-    fun createReceiver() {
-        roomPersistence.createReceiver(anyPerson.id, anyExpenseId)
+  @Test
+  fun createReceiver() {
+    roomPersistence.createReceiver(anyPerson.id, anyExpenseId)
 
-        verify(databaseDao).insert(any<ReceiverDBModel>())
-    }
+    verify(databaseDao).insert(any<ReceiverDBModel>())
+  }
 
-    @Test
-    fun deleteReceiver() {
-        roomPersistence.deleteReceiver(anyPerson.id, anyExpenseId)
+  @Test
+  fun deleteReceiver() {
+    roomPersistence.deleteReceiver(anyPerson.id, anyExpenseId)
 
-        verify(databaseDao).deleteReceiver(any())
-    }
+    verify(databaseDao).deleteReceiver(any())
+  }
 
-    @Test
-    fun findPayments() {
-        roomPersistence.findPayments(anyExpenseId)
+  @Test
+  fun findPayments() {
+    roomPersistence.findPayments(anyExpenseId)
 
-        verify(databaseDao).findPayments(any())
-    }
+    verify(databaseDao).findPayments(any())
+  }
 
-    @Test
-    fun findExpense() {
-        roomPersistence.findExpense(anyExpenseId)
+  @Test
+  fun findExpense() {
+    roomPersistence.findExpense(anyExpenseId)
 
-        verify(databaseDao).findExpense(any())
-    }
+    verify(databaseDao).findExpense(any())
+  }
 
-    @Test
-    fun deleteExpense() {
-        whenever(databaseDao.findExpense(any())).thenReturn(ExpenseDBModel())
+  @Test
+  fun deleteExpense() {
+    whenever(databaseDao.findExpense(any())).thenReturn(ExpenseDBModel())
 
-        roomPersistence.deleteExpense(anyExpenseId)
+    roomPersistence.deleteExpense(anyExpenseId)
 
-        verify(databaseDao).deleteExpense(any())
-    }
+    verify(databaseDao).deleteExpense(any())
+  }
 
-    @Test
-    fun findReceivers() {
-        roomPersistence.findReceivers(anyExpenseId)
+  @Test
+  fun findReceivers() {
+    roomPersistence.findReceivers(anyExpenseId)
 
-        verify(databaseDao).findReceivers(any())
-    }
+    verify(databaseDao).findReceivers(any())
+  }
 
-    @Test
-    fun createExpense() {
-        roomPersistence.createExpense(Expense())
+  @Test
+  fun createExpense() {
+    roomPersistence.createExpense(Expense())
 
-        verify(databaseDao).insert(any<ExpenseDBModel>())
-    }
+    verify(databaseDao).insert(any<ExpenseDBModel>())
+  }
 
-    @Test
-    fun updateExpense() {
-        roomPersistence.updateExpense(Expense())
+  @Test
+  fun updateExpense() {
+    roomPersistence.updateExpense(Expense())
 
-        verify(databaseDao).update(any<ExpenseDBModel>())
-    }
+    verify(databaseDao).update(any<ExpenseDBModel>())
+  }
 }

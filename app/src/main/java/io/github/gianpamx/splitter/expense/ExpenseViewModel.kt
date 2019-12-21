@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.AppSchedulers
 import io.github.gianpamx.splitter.core.GetExpense
+import io.github.gianpamx.splitter.core.GetPayers
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
 import io.github.gianpamx.splitter.core.ObservePayersUseCase
 import io.github.gianpamx.splitter.core.ObserveReceiversUseCase
@@ -27,7 +28,7 @@ import javax.inject.Inject
 class ExpenseViewModel @Inject constructor(
   private val savePaymentUseCase: SavePaymentUseCase,
   private val saveReceiverUseCase: SaveReceiverUseCase,
-  private val observePayersUseCase: ObservePayersUseCase,
+  private val getPayers: GetPayers,
   private val observeReceiversUseCase: ObserveReceiversUseCase,
   private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
   private val saveExpense: SaveExpense,
@@ -55,10 +56,16 @@ class ExpenseViewModel @Inject constructor(
         }
     )
 
-    observePayersUseCase.invoke(expenseId) { payers, total ->
-      this@ExpenseViewModel.payers.postValue(payers.map { it.toPayerModel() })
-      this@ExpenseViewModel.total.postValue(total.toAmount())
-    }
+    compositeDisposable.add(getPayers(expenseId)
+        .subscribeOn(appSchedulers.computation())
+        .observeOn(appSchedulers.mainThread())
+        .subscribe({ output ->
+          payers.value = output.payers.map { it.toPayerModel() }
+          total.value = output.total.toAmount()
+        }) {
+          error.value = Exception(it)
+        }
+    )
 
     observeReceiversUseCase.invoke(expenseId) {
       receivers.postValue(it.map { it.toReceiverModel() })
