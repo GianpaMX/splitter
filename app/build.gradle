@@ -101,6 +101,7 @@ dependencies {
     testImplementation libraries.testing.hamcrest
     testImplementation libraries.androidx.testing
     testImplementation libraries.testing.mockitoKotlin2
+    testImplementation libraries.testing.assertj
 
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
