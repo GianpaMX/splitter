@@ -78,6 +78,11 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     override fun findExpense(expenseId: Long) =
             databaseDao.findExpense(expenseId)?.toExpense()
 
+    override fun findExpenseObservable(expenseId: Long) =
+            databaseDao
+                .findExpenseObservable(expenseId)
+                .map { it.toExpense() }
+
     override fun findExpensesByPersonId(personId: Long) = databaseDao.findExpensesByPersonId(personId).map { it.toExpense() }
 
     override fun createExpense(expense: Expense) =
