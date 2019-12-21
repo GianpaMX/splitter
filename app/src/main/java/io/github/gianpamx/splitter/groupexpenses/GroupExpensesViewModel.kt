@@ -8,7 +8,6 @@ import io.github.gianpamx.splitter.core.SaveExpense
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.toAmount
 import io.github.gianpamx.splitter.groupexpenses.model.ExpenseItem
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 import javax.inject.Inject

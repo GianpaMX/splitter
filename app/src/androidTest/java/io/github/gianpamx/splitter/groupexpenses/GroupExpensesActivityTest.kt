@@ -28,49 +28,41 @@ import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 class GroupExpensesActivityTest {
-    @Rule
-    @JvmField
-    var activityTestRule = IntentsTestRule(GroupExpensesActivity::class.java, false, false)
+  @Rule @JvmField var activityTestRule = IntentsTestRule(GroupExpensesActivity::class.java, false, false)
 
-    @Inject
-    lateinit var database: AppDatabase
+  @Inject lateinit var database: AppDatabase
 
-    @Inject
-    lateinit var dao: DatabaseDao
+  @Inject lateinit var dao: DatabaseDao
 
-    @Before
-    fun setUp() {
-        val testApp = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestApp
-        testApp.testAppComponent.inject(this)
+  @Before fun setUp() {
+    val testApp = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestApp
+    testApp.testAppComponent.inject(this)
 
-        dao.insert(ExpenseDBModel(id = 1L, title = "Any Title"))
-        dao.insert(PersonDBModel(id = 1, name = "Any Name"))
-        dao.insert(PersonDBModel(id = 2, name = "Any Other Name"))
-        dao.insert(PaymentDBModel(expenseId = 1L, personId = 1, cents = 10))
-        dao.insert(ReceiverDBModel(expenseId = 1L, personId = 2))
-    }
+    dao.insert(ExpenseDBModel(id = 1L, title = "Any Title"))
+    dao.insert(PersonDBModel(id = 1, name = "Any Name"))
+    dao.insert(PersonDBModel(id = 2, name = "Any Other Name"))
+    dao.insert(PaymentDBModel(expenseId = 1L, personId = 1, cents = 10))
+    dao.insert(ReceiverDBModel(expenseId = 1L, personId = 2))
+  }
 
-    @After
-    fun tearDown() {
-        database.clearAllTables()
-    }
+  @After fun tearDown() {
+    database.clearAllTables()
+  }
 
-    @Test
-    fun addExpense() {
-        activityTestRule.launchActivity(Intent())
+  @Test fun addExpense() {
+    activityTestRule.launchActivity(Intent())
 
-        sleep(3, TimeUnit.SECONDS)
-        clickOn(R.id.addExpenseFAB)
+    sleep(3, TimeUnit.SECONDS)
+    clickOn(R.id.addExpenseFAB)
 
-        intended(hasComponent(ExpenseActivity::class.java.name))
-    }
+    intended(hasComponent(ExpenseActivity::class.java.name))
+  }
 
-    @Test
-    fun editExpense() {
-        activityTestRule.launchActivity(Intent())
+  @Test fun editExpense() {
+    activityTestRule.launchActivity(Intent())
 
-        clickListItem(R.id.expenseRecyclerView, 0)
+    clickListItem(R.id.expenseRecyclerView, 0)
 
-        intended(hasComponent(ExpenseActivity::class.java.name))
-    }
+    intended(hasComponent(ExpenseActivity::class.java.name))
+  }
 }

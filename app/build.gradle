@@ -11,109 +11,107 @@ def appVersionCode = getVersionCode()
 def appVersionName = getVersionName()
 
 android {
-    compileSdkVersion sdk.compile
+  compileSdkVersion sdk.compile
 
-    defaultConfig {
-        applicationId "io.github.gianpamx.splitter"
-        minSdkVersion sdk.min
-        targetSdkVersion sdk.target
-        versionCode appVersionCode
-        versionName appVersionName
-        testInstrumentationRunner "io.github.gianpamx.splitter.CustomTestRunner"
+  defaultConfig {
+    applicationId "io.github.gianpamx.splitter"
+    minSdkVersion sdk.min
+    targetSdkVersion sdk.target
+    versionCode appVersionCode
+    versionName appVersionName
+    testInstrumentationRunner "io.github.gianpamx.splitter.CustomTestRunner"
+  }
+  signingConfigs {
+    release {
+      storeFile file(signingStoreFile)
+      storePassword signingStorePassword
+      keyAlias signingKeyAlias
+      keyPassword signingKeyPassword
     }
-    signingConfigs {
-        release {
-            storeFile file(signingStoreFile)
-            storePassword signingStorePassword
-            keyAlias signingKeyAlias
-            keyPassword signingKeyPassword
-        }
+  }
+  buildTypes {
+    debug {
+      testCoverageEnabled !project.hasProperty('android.injected.invoked.from.ide')
     }
-    buildTypes {
-        debug {
-            testCoverageEnabled !project.hasProperty('android.injected.invoked.from.ide')
-        }
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+    release {
+      minifyEnabled false
+      signingConfig signingConfigs.release
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
 }
 
 androidExtensions {
-    experimental = true
+  experimental = true
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 }
 
 dependencies {
-    implementation libraries.kotlin.kotlin
-    androidTestImplementation libraries.kotlin.stdlib
-    androidTestImplementation libraries.kotlin.reflect
+  implementation libraries.kotlin.kotlin
+  androidTestImplementation libraries.kotlin.stdlib
+  androidTestImplementation libraries.kotlin.reflect
 
-    kapt libraries.dagger.compiler
-    implementation libraries.dagger.dagger
-    implementation libraries.dagger.android
-    implementation libraries.dagger.support
-    kapt libraries.dagger.processor
-    kaptAndroidTest libraries.dagger.processor
+  kapt libraries.dagger.compiler
+  implementation libraries.dagger.dagger
+  implementation libraries.dagger.android
+  implementation libraries.dagger.support
+  kapt libraries.dagger.processor
+  kaptAndroidTest libraries.dagger.processor
 
-    implementation libraries.coroutines.core
-    implementation libraries.coroutines.android
-    implementation libraries.coroutines.jdk8
-    testImplementation libraries.coroutines.core
-    testImplementation libraries.coroutines.testing
+  implementation libraries.coroutines.core
+  implementation libraries.coroutines.android
+  implementation libraries.coroutines.jdk8
+  testImplementation libraries.coroutines.core
+  testImplementation libraries.coroutines.testing
 
-    implementation libraries.androidx.material
-    implementation libraries.androidx.appcompat
-    implementation libraries.androidx.cardview
-    implementation libraries.androidx.constraintLayout
-    androidTestImplementation libraries.androidx.testing
+  implementation libraries.androidx.material
+  implementation libraries.androidx.appcompat
+  implementation libraries.androidx.cardview
+  implementation libraries.androidx.constraintLayout
+  androidTestImplementation libraries.androidx.testing
 
-    implementation libraries.lifecycle.extensions
-    kapt libraries.lifecycle.compiler
-    implementation libraries.lifecycle.ktx
+  implementation libraries.lifecycle.extensions
+  kapt libraries.lifecycle.compiler
+  implementation libraries.lifecycle.ktx
 
-    implementation libraries.room.runtime
-    kapt libraries.room.compiler
-    implementation libraries.room.rxjava2
-    testImplementation libraries.room.testing
+  implementation libraries.room.runtime
+  kapt libraries.room.compiler
+  implementation libraries.room.rxjava2
+  testImplementation libraries.room.testing
 
-    implementation libraries.glide.glide
-    kapt libraries.glide.annotations
-    kapt libraries.glide.compiler
+  implementation libraries.glide.glide
+  kapt libraries.glide.annotations
+  kapt libraries.glide.compiler
 
-    implementation libraries.retrofit.retrofit
-    implementation libraries.retrofit.converter
-    testImplementation libraries.retrofit.testing
+  implementation libraries.retrofit.retrofit
+  implementation libraries.retrofit.converter
+  testImplementation libraries.retrofit.testing
 
-    implementation libraries.rx.java
-    implementation libraries.rx.kotlin
-    implementation libraries.rx.android
+  implementation libraries.rx.java
+  implementation libraries.rx.kotlin
+  implementation libraries.rx.android
 
+  testImplementation libraries.testing.junit
+  testImplementation libraries.testing.hamcrest
+  testImplementation libraries.androidx.testing
+  testImplementation libraries.testing.mockitoKotlin2
+  testImplementation libraries.testing.assertj
 
-    testImplementation libraries.testing.junit
-    testImplementation libraries.testing.hamcrest
-    testImplementation libraries.androidx.testing
-    testImplementation libraries.testing.mockitoKotlin2
-    testImplementation libraries.testing.assertj
-
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation libraries.testing.mockitoAndroid
-    androidTestImplementation libraries.testing.mockitoKotlin2
-    androidTestImplementation libraries.testing.rules
-    androidTestImplementation libraries.testing.runner
-    androidTestImplementation libraries.testing.espresso
-    androidTestImplementation libraries.testing.espressoIntents
-    androidTestImplementation(libraries.testing.barista) {
-        exclude group: 'com.android.support'
-        exclude group: 'org.jetbrains.kotlin'
-        exclude group: 'androidx.test.espresso', module: 'espresso-intents'
-    }
+  androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+  androidTestImplementation libraries.testing.mockitoAndroid
+  androidTestImplementation libraries.testing.mockitoKotlin2
+  androidTestImplementation libraries.testing.rules
+  androidTestImplementation libraries.testing.runner
+  androidTestImplementation libraries.testing.espresso
+  androidTestImplementation libraries.testing.espressoIntents
+  androidTestImplementation(libraries.testing.barista) {
+    exclude group: 'com.android.support'
+    exclude group: 'org.jetbrains.kotlin'
+    exclude group: 'androidx.test.espresso', module: 'espresso-intents'
+  }
 }
