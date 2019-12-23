@@ -10,6 +10,7 @@ import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
 import io.github.gianpamx.splitter.core.ObservePayersUseCase
 import io.github.gianpamx.splitter.core.ObserveReceiversUseCase
 import io.github.gianpamx.splitter.core.SaveExpense
+import io.github.gianpamx.splitter.core.SavePayment
 import io.github.gianpamx.splitter.core.SavePaymentUseCase
 import io.github.gianpamx.splitter.core.SaveReceiverUseCase
 import io.github.gianpamx.splitter.core.entity.Expense
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExpenseViewModel @Inject constructor(
-  private val savePaymentUseCase: SavePaymentUseCase,
+  private val savePayment: SavePayment,
   private val saveReceiverUseCase: SaveReceiverUseCase,
   private val getPayers: GetPayers,
   private val observeReceiversUseCase: ObserveReceiversUseCase,
@@ -42,7 +43,7 @@ class ExpenseViewModel @Inject constructor(
   val total = MutableLiveData<Double>()
   val error = MutableLiveData<Exception>()
 
-  val compositeDisposable = CompositeDisposable()
+  private val compositeDisposable = CompositeDisposable()
 
   fun loadExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.Default) {
 
@@ -73,11 +74,15 @@ class ExpenseViewModel @Inject constructor(
   }
 
   fun save(payerModel: PayerModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
-    try {
-      savePaymentUseCase.invoke(payerModel.amount.toCents(), payerModel.toPerson(), expenseId)
-    } catch (e: Exception) {
-      error.postValue(e)
-    }
+    compositeDisposable.add(savePayment(payerModel.amount.toCents(), payerModel.toPerson(), expenseId)
+        .subscribeOn(appSchedulers.computation())
+        .observeOn(appSchedulers.mainThread())
+        .subscribe({
+          // ignore
+        }) {
+          error.value = Exception(it)
+        }
+    )
   }
 
   fun save(receiverModel: ReceiverModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
@@ -98,8 +103,10 @@ class ExpenseViewModel @Inject constructor(
         .flatMapSingle { saveExpense(it) }
         .subscribeOn(appSchedulers.computation())
         .observeOn(appSchedulers.mainThread())
-        .subscribe { it ->
+        .subscribe({ _ ->
           // ignore
+        }) {
+          error.value = Exception(it)
         }
     )
   }

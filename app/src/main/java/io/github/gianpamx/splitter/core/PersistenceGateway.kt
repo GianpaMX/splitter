@@ -12,15 +12,21 @@ import io.reactivex.Single
 
 interface PersistenceGateway {
   fun updatePerson(person: Person)
+  fun updatePersonObservable(person: Person): Observable<Person>
   fun createPerson(person: Person): Long
+  fun createPersonObservable(person: Person): Observable<Person>
   fun findPersons(): List<Person>
 
   fun findPayment(person: Person, expenseId: Long): Payment?
+  fun findPaymentObservable(person: Person, expenseId: Long): Observable<Payment>
   fun findPayments(expenseId: Long): List<Payment>
   fun observePayments(expenseId: Long): Single<List<Payment>>
   fun createPayment(payment: Payment): Payment
+  fun createPaymentObservable(payment: Payment): Observable<Payment>
   fun updatePayment(payment: Payment): Payment
+  fun updatePaymentObservable(payment: Payment): Observable<Payment>
   fun deletePayment(expenseId: Long, personId: Long): Payment?
+  fun deletePaymentObservable(expenseId: Long, personId: Long): Completable
   fun findPaymentsByPersonId(personId: Long): List<Payment>
 
   fun observePayments(expenseId: Long, observer: (List<Payer>) -> Unit)

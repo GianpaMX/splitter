@@ -11,6 +11,7 @@ import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
@@ -18,12 +19,25 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     databaseDao.update(person.toPersonDBModel())
   }
 
+  override fun updatePersonObservable(person: Person) = databaseDao
+      .updateCompletable(person.toPersonDBModel())
+      .andThen(Observable.just(person))
+
   override fun createPerson(person: Person) = databaseDao.insert(person.toPersonDBModel())
+
+  override fun createPersonObservable(person: Person) = databaseDao
+      .insertCompletable(person.toPersonDBModel())
+      .andThen(Observable.just(person))
 
   override fun findPersons() = databaseDao.findPersons().map { it.toPerson() }
 
   override fun findPayment(person: Person, expenseId: Long) =
     databaseDao.findPayment(person.id, expenseId)?.toPayment(person)
+
+  override fun findPaymentObservable(person: Person, expenseId: Long) =
+    databaseDao
+        .findPaymentObservable(person.id, expenseId)
+        .map { it.toPayment(person) }
 
   override fun findPayments(expenseId: Long) =
     databaseDao.findPayments(expenseId).map {
@@ -38,10 +52,18 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     return payment
   }
 
+  override fun createPaymentObservable(payment: Payment) = databaseDao
+      .insertCompletable(payment.toPaymentDBModel())
+      .andThen(Observable.just(payment))
+
   override fun updatePayment(payment: Payment): Payment {
     databaseDao.update(payment.toPaymentDBModel())
     return payment
   }
+
+  override fun updatePaymentObservable(payment: Payment) = databaseDao
+      .updateCompletable(payment.toPaymentDBModel())
+      .andThen(Observable.just(payment))
 
   override fun deletePayment(expenseId: Long, personId: Long): Payment? {
     databaseDao.findPayment(expenseId, personId)?.let {
@@ -49,6 +71,12 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     }
     return null
   }
+
+  override fun deletePaymentObservable(expenseId: Long, personId: Long) = databaseDao
+      .findPaymentObservable(expenseId, personId)
+      .flatMapCompletable {
+        databaseDao.deletePaymentCompletable(it)
+      }
 
   override fun findPaymentsByPersonId(personId: Long) =
     databaseDao.findPaymentsByPersonId(personId).map {

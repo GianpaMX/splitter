@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import io.github.gianpamx.splitter.core.entity.Payment
 import io.github.gianpamx.splitter.frameworks.room.model.ExpenseDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.PaymentDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
@@ -30,6 +31,9 @@ interface DatabaseDao {
   @Query("SELECT * FROM Payment WHERE personId = :personId AND expenseId = :expenseId")
   fun findPayment(personId: Long, expenseId: Long): PaymentDBModel?
 
+  @Query("SELECT * FROM Payment WHERE personId = :personId AND expenseId = :expenseId")
+  fun findPaymentObservable(personId: Long, expenseId: Long): Observable<PaymentDBModel>
+
   @Query("SELECT * FROM Payment WHERE expenseId = :expenseId")
   fun findPayments(expenseId: Long): List<PaymentDBModel>
 
@@ -39,11 +43,20 @@ interface DatabaseDao {
   @Insert
   fun insert(payment: PaymentDBModel)
 
+  @Insert
+  fun insertCompletable(paymentDBModel: PaymentDBModel) : Completable
+
   @Update
   fun update(payment: PaymentDBModel)
 
+  @Update
+  fun updateCompletable(paymentDBModel: PaymentDBModel): Completable
+
   @Delete
   fun deletePayment(payment: PaymentDBModel)
+
+  @Delete
+  fun deletePaymentCompletable(payment: PaymentDBModel) : Completable
 
   @Query("SELECT * FROM Person WHERE id = :personId")
   fun findPerson(personId: Long): PersonDBModel
@@ -54,8 +67,14 @@ interface DatabaseDao {
   @Update
   fun update(person: PersonDBModel)
 
+  @Update
+  fun updateCompletable(person: PersonDBModel) : Completable
+
   @Insert
   fun insert(person: PersonDBModel): Long
+
+  @Insert
+  fun insertCompletable(person: PersonDBModel): Completable
 
   @Query("SELECT DISTINCT E.* FROM Expense AS E JOIN Payment AS P ON(E.id = P.expenseId)")
   fun observeExpenses(): Flowable<List<ExpenseDBModel>>
