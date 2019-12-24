@@ -8,6 +8,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.Single
 
 interface PersistenceGateway {
@@ -46,6 +47,7 @@ interface PersistenceGateway {
   fun deleteExpense(expenseId: Long)
 
   fun observeReceivers(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit)
+  fun getExpenseReceivers(expenseId: Long): Observable<List<Pair<Person, Boolean>>>
   fun findReceiver(personId: Long, expenseId: Long): Pair<Long, Long>?
   fun findReceivers(expenseId: Long): List<Person>
   fun createReceiver(personId: Long, expenseId: Long)

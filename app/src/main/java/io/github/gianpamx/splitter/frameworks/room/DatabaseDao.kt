@@ -108,7 +108,7 @@ interface DatabaseDao {
       "CASE WHEN R.expenseId IS NULL THEN $FALSE ELSE $TRUE END AS checked " +
       "FROM Person AS P " +
       "LEFT JOIN Receiver AS R ON(P.id = R.personId AND expenseId = :expenseId)")
-  fun observeReceivers(expenseId: Long): Flowable<List<ReceiverDBView>>
+  fun observeReceivers(expenseId: Long): Observable<List<ReceiverDBView>>
 
   @Query("SELECT * FROM Receiver WHERE personId = :personId AND expenseId = :expenseId")
   fun findReceiver(personId: Long, expenseId: Long): ReceiverDBModel?

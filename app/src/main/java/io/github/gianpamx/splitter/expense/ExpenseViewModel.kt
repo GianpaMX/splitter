@@ -6,12 +6,10 @@ import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.AppSchedulers
 import io.github.gianpamx.splitter.core.GetExpense
 import io.github.gianpamx.splitter.core.GetPayers
+import io.github.gianpamx.splitter.core.GetReceivers
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
-import io.github.gianpamx.splitter.core.ObservePayersUseCase
-import io.github.gianpamx.splitter.core.ObserveReceiversUseCase
 import io.github.gianpamx.splitter.core.SaveExpense
 import io.github.gianpamx.splitter.core.SavePayment
-import io.github.gianpamx.splitter.core.SavePaymentUseCase
 import io.github.gianpamx.splitter.core.SaveReceiverUseCase
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
@@ -30,7 +28,7 @@ class ExpenseViewModel @Inject constructor(
   private val savePayment: SavePayment,
   private val saveReceiverUseCase: SaveReceiverUseCase,
   private val getPayers: GetPayers,
-  private val observeReceiversUseCase: ObserveReceiversUseCase,
+  private val getReceivers: GetReceivers,
   private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
   private val saveExpense: SaveExpense,
   private val getExpense: GetExpense,
@@ -45,8 +43,7 @@ class ExpenseViewModel @Inject constructor(
 
   private val compositeDisposable = CompositeDisposable()
 
-  fun loadExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.Default) {
-
+  fun loadExpense(expenseId: Long) {
     compositeDisposable.add(getExpense(expenseId)
         .subscribeOn(appSchedulers.computation())
         .observeOn(appSchedulers.mainThread())
@@ -68,12 +65,18 @@ class ExpenseViewModel @Inject constructor(
         }
     )
 
-    observeReceiversUseCase.invoke(expenseId) {
-      receivers.postValue(it.map { it.toReceiverModel() })
-    }
+    compositeDisposable.add(getReceivers(expenseId)
+        .subscribeOn(appSchedulers.computation())
+        .observeOn(appSchedulers.mainThread())
+        .subscribe({ it ->
+          receivers.value = it.map { it.toReceiverModel() }
+        }) {
+          error.value = Exception(it)
+        }
+    )
   }
 
-  fun save(payerModel: PayerModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
+  fun save(payerModel: PayerModel, expenseId: Long) {
     compositeDisposable.add(savePayment(payerModel.amount.toCents(), payerModel.toPerson(), expenseId)
         .subscribeOn(appSchedulers.computation())
         .observeOn(appSchedulers.mainThread())
@@ -97,7 +100,7 @@ class ExpenseViewModel @Inject constructor(
     keepOrDeleteExpenseUseCase.invoke(expenseId)
   }
 
-  fun save(title: String, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
+  fun save(title: String, expenseId: Long) {
     compositeDisposable.add(getExpense(expenseId)
         .map { it.copy(title = title) }
         .flatMapSingle { saveExpense(it) }

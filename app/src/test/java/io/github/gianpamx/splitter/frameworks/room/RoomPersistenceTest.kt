@@ -69,7 +69,7 @@ class RoomPersistenceTest {
   @Test
   fun observeReceivers() {
     val observer = mock<(List<Pair<Person, Boolean>>) -> Unit>()
-    whenever(databaseDao.observeReceivers(any())).thenReturn(FlowableJust(listOf(ReceiverDBView(personId = anyPerson.id,
+    whenever(databaseDao.observeReceivers(any())).thenReturn(Observable.just(listOf(ReceiverDBView(personId = anyPerson.id,
         name = anyPerson.name,
         checked = FALSE))))
 

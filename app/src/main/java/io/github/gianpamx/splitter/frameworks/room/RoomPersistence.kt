@@ -12,6 +12,7 @@ import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.Single
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
@@ -142,6 +143,15 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
       })
     }
   }
+
+  override fun getExpenseReceivers(expenseId: Long) =
+    databaseDao
+        .observeReceivers(expenseId)
+        .map { receivers ->
+          receivers.map {
+            Pair(it.toPerson(), it.checked == TRUE)
+          }
+        }
 
   override fun findReceiver(personId: Long, expenseId: Long) =
     databaseDao.findReceiver(personId, expenseId)?.toPair()
