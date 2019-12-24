@@ -7,7 +7,7 @@ import io.github.gianpamx.splitter.AppSchedulers
 import io.github.gianpamx.splitter.core.GetExpense
 import io.github.gianpamx.splitter.core.GetPayers
 import io.github.gianpamx.splitter.core.GetReceivers
-import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
+import io.github.gianpamx.splitter.core.KeepOrDeleteExpense
 import io.github.gianpamx.splitter.core.SaveExpense
 import io.github.gianpamx.splitter.core.SavePayment
 import io.github.gianpamx.splitter.core.SaveReceiver
@@ -29,7 +29,7 @@ class ExpenseViewModel @Inject constructor(
   private val saveReceiver: SaveReceiver,
   private val getPayers: GetPayers,
   private val getReceivers: GetReceivers,
-  private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
+  private val keepOrDeleteExpense: KeepOrDeleteExpense,
   private val saveExpense: SaveExpense,
   private val getExpense: GetExpense,
   private val appSchedulers: AppSchedulers
@@ -101,7 +101,15 @@ class ExpenseViewModel @Inject constructor(
   }
 
   fun exitExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
-    keepOrDeleteExpenseUseCase.invoke(expenseId)
+    compositeDisposable.add(keepOrDeleteExpense(expenseId)
+        .subscribeOn(appSchedulers.computation())
+        .observeOn(appSchedulers.mainThread())
+        .subscribe({
+          // ignore
+        }) {
+          error.value = Exception(it)
+        }
+    )
   }
 
   fun save(title: String, expenseId: Long) {

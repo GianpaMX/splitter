@@ -7,6 +7,7 @@ import io.github.gianpamx.splitter.core.GetExpenseUseCase
 import io.github.gianpamx.splitter.core.GetExpenseUseCaseImpl
 import io.github.gianpamx.splitter.core.GetPayers
 import io.github.gianpamx.splitter.core.GetReceivers
+import io.github.gianpamx.splitter.core.KeepOrDeleteExpense
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCaseImpl
 import io.github.gianpamx.splitter.core.ObserveExpenses
@@ -83,4 +84,7 @@ class CoreModule {
 
   @Provides
   fun provideSaveReceiver(persistenceGateway: PersistenceGateway) = SaveReceiver(persistenceGateway)
+
+  @Provides
+  fun provideKeepOrDeleteExpense(persistenceGateway: PersistenceGateway) = KeepOrDeleteExpense(persistenceGateway)
 }

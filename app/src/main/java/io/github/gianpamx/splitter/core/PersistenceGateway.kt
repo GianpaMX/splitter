@@ -21,6 +21,7 @@ interface PersistenceGateway {
   fun findPayment(person: Person, expenseId: Long): Payment?
   fun findPaymentObservable(person: Person, expenseId: Long): Observable<Payment>
   fun findPayments(expenseId: Long): List<Payment>
+  fun findPaymentsObservable(expenseId: Long): Observable<List<Payment>>
   fun observePayments(expenseId: Long): Single<List<Payment>>
   fun createPayment(payment: Payment): Payment
   fun createPaymentObservable(payment: Payment): Observable<Payment>
@@ -45,12 +46,14 @@ interface PersistenceGateway {
   fun findExpenseObservable(expenseId: Long): Maybe<Expense>
   fun findExpensesByPersonId(personId: Long): List<Expense>
   fun deleteExpense(expenseId: Long)
+  fun deleteExpenseCompletable(expenseId: Long) : Completable
 
   fun observeReceivers(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit)
   fun getExpenseReceivers(expenseId: Long): Observable<List<Pair<Person, Boolean>>>
   fun findReceiver(personId: Long, expenseId: Long): Pair<Long, Long>?
   fun findReceiverObservable(personId: Long, expenseId: Long): Observable<Pair<Long, Long>>
   fun findReceivers(expenseId: Long): List<Person>
+  fun findReceiversObservable(expenseId: Long): Observable<List<Person>>
   fun createReceiver(personId: Long, expenseId: Long)
   fun createReceiverCompletable(personId: Long, expenseId: Long): Completable
   fun deleteReceiver(personId: Long, expenseId: Long)
