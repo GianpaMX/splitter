@@ -16,7 +16,7 @@ class SavePayment(private val persistenceGateway: PersistenceGateway) {
       it.cents > 0
     }.switchIfEmpty(Observable.defer {
       persistenceGateway
-          .deletePaymentObservable(expenseId, person.id)
+          .deletePaymentCompletable(expenseId, person.id)
           .toObservable<Payment>()
     }).flatMap { payment ->
       persistenceGateway

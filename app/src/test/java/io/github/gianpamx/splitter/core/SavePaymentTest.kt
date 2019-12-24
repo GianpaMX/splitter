@@ -1,7 +1,6 @@
 package io.github.gianpamx.splitter.core
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.github.gianpamx.splitter.core.entity.Payment
 import io.github.gianpamx.splitter.core.entity.Person
@@ -56,7 +55,7 @@ class SavePaymentTest {
   }
 
   @Test fun `delete payment`() {
-    whenever(persistenceGateway.deletePaymentObservable(any(), any())).thenReturn(Completable.complete())
+    whenever(persistenceGateway.deletePaymentCompletable(any(), any())).thenReturn(Completable.complete())
 
     savePayment.invoke(0, anyPerson, anyExpenseId).subscribe(testObserver)
 

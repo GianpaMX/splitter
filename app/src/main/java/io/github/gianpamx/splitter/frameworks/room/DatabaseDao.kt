@@ -113,12 +113,21 @@ interface DatabaseDao {
   @Query("SELECT * FROM Receiver WHERE personId = :personId AND expenseId = :expenseId")
   fun findReceiver(personId: Long, expenseId: Long): ReceiverDBModel?
 
+  @Query("SELECT * FROM Receiver WHERE personId = :personId AND expenseId = :expenseId")
+  fun findReceiverObservable(personId: Long, expenseId: Long) : Observable<ReceiverDBModel>
+
   @Query("SELECT * FROM Receiver WHERE expenseId = :expenseId")
   fun findReceivers(expenseId: Long): List<ReceiverDBModel>
 
   @Insert
   fun insert(receiver: ReceiverDBModel)
 
+  @Insert
+  fun insertCompletable(receiverDBModel: ReceiverDBModel): Completable
+
   @Delete
   fun deleteReceiver(receiver: ReceiverDBModel)
+
+  @Delete
+  fun deleteReceiverCompletable(receiverDBModel: ReceiverDBModel): Completable
 }

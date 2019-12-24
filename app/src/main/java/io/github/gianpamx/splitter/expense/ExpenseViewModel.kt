@@ -10,7 +10,7 @@ import io.github.gianpamx.splitter.core.GetReceivers
 import io.github.gianpamx.splitter.core.KeepOrDeleteExpenseUseCase
 import io.github.gianpamx.splitter.core.SaveExpense
 import io.github.gianpamx.splitter.core.SavePayment
-import io.github.gianpamx.splitter.core.SaveReceiverUseCase
+import io.github.gianpamx.splitter.core.SaveReceiver
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payer
 import io.github.gianpamx.splitter.core.entity.Person
@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class ExpenseViewModel @Inject constructor(
   private val savePayment: SavePayment,
-  private val saveReceiverUseCase: SaveReceiverUseCase,
+  private val saveReceiver: SaveReceiver,
   private val getPayers: GetPayers,
   private val getReceivers: GetReceivers,
   private val keepOrDeleteExpenseUseCase: KeepOrDeleteExpenseUseCase,
@@ -88,12 +88,16 @@ class ExpenseViewModel @Inject constructor(
     )
   }
 
-  fun save(receiverModel: ReceiverModel, expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
-    try {
-      saveReceiverUseCase.invoke(receiverModel.isChecked, receiverModel.toPerson(), expenseId)
-    } catch (e: Exception) {
-      error.postValue(e)
-    }
+  fun save(receiverModel: ReceiverModel, expenseId: Long) {
+    compositeDisposable.add(saveReceiver(receiverModel.isChecked, receiverModel.toPerson(), expenseId)
+        .subscribeOn(appSchedulers.computation())
+        .observeOn(appSchedulers.mainThread())
+        .subscribe({
+          // ignore
+        }) {
+          error.value = Exception(it)
+        }
+    )
   }
 
   fun exitExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {

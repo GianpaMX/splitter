@@ -21,6 +21,7 @@ import io.github.gianpamx.splitter.core.SaveExpenseUseCaseImpl
 import io.github.gianpamx.splitter.core.SavePayment
 import io.github.gianpamx.splitter.core.SavePaymentUseCase
 import io.github.gianpamx.splitter.core.SavePaymentUseCaseImpl
+import io.github.gianpamx.splitter.core.SaveReceiver
 import io.github.gianpamx.splitter.core.SaveReceiverUseCase
 import io.github.gianpamx.splitter.core.SaveReceiverUseCaseImpl
 import io.github.gianpamx.splitter.core.SettleUpUseCase
@@ -79,4 +80,7 @@ class CoreModule {
 
   @Provides
   fun provideGetReceivers(persistenceGateway: PersistenceGateway) = GetReceivers(persistenceGateway)
+
+  @Provides
+  fun provideSaveReceiver(persistenceGateway: PersistenceGateway) = SaveReceiver(persistenceGateway)
 }

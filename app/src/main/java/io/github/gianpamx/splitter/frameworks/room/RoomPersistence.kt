@@ -11,6 +11,7 @@ import io.github.gianpamx.splitter.frameworks.room.model.PersonDBModel
 import io.github.gianpamx.splitter.frameworks.room.model.ReceiverDBModel
 import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.Single
@@ -73,7 +74,7 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     return null
   }
 
-  override fun deletePaymentObservable(expenseId: Long, personId: Long) = databaseDao
+  override fun deletePaymentCompletable(expenseId: Long, personId: Long) = databaseDao
       .findPaymentObservable(expenseId, personId)
       .flatMapCompletable {
         databaseDao.deletePaymentCompletable(it)
@@ -156,6 +157,11 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
   override fun findReceiver(personId: Long, expenseId: Long) =
     databaseDao.findReceiver(personId, expenseId)?.toPair()
 
+  override fun findReceiverObservable(personId: Long, expenseId: Long) =
+    databaseDao
+        .findReceiverObservable(personId, expenseId)
+        .map { it.toPair() }
+
   override fun findReceivers(expenseId: Long) =
     databaseDao.findReceivers(expenseId).map {
       databaseDao.findPerson(it.personId).toPerson()
@@ -165,9 +171,15 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     databaseDao.insert(ReceiverDBModel(expenseId = expenseId, personId = personId))
   }
 
+  override fun createReceiverCompletable(personId: Long, expenseId: Long) = databaseDao
+      .insertCompletable(ReceiverDBModel(expenseId = expenseId, personId = personId))
+
   override fun deleteReceiver(personId: Long, expenseId: Long) {
     databaseDao.deleteReceiver(ReceiverDBModel(expenseId = expenseId, personId = personId))
   }
+
+  override fun deleteReceiverCompletable(personId: Long, expenseId: Long) = databaseDao
+      .deleteReceiverCompletable(ReceiverDBModel(expenseId = expenseId, personId = personId))
 }
 
 private fun ExpenseDBModel.toExpense() = Expense(
