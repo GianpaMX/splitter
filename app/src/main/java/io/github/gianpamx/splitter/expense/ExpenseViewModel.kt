@@ -2,7 +2,6 @@ package io.github.gianpamx.splitter.expense
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.github.gianpamx.splitter.AppSchedulers
 import io.github.gianpamx.splitter.core.GetExpense
 import io.github.gianpamx.splitter.core.GetPayers
@@ -20,8 +19,6 @@ import io.github.gianpamx.splitter.expense.model.ExpenseModel
 import io.github.gianpamx.splitter.expense.model.PayerModel
 import io.github.gianpamx.splitter.expense.model.ReceiverModel
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExpenseViewModel @Inject constructor(
@@ -100,7 +97,7 @@ class ExpenseViewModel @Inject constructor(
     )
   }
 
-  fun exitExpense(expenseId: Long) = viewModelScope.launch(Dispatchers.IO) {
+  fun exitExpense(expenseId: Long) {
     compositeDisposable.add(keepOrDeleteExpense(expenseId)
         .subscribeOn(appSchedulers.computation())
         .observeOn(appSchedulers.mainThread())

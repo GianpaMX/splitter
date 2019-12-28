@@ -32,7 +32,7 @@ interface DatabaseDao {
   fun findPayment(personId: Long, expenseId: Long): PaymentDBModel?
 
   @Query("SELECT * FROM Payment WHERE personId = :personId AND expenseId = :expenseId")
-  fun findPaymentObservable(personId: Long, expenseId: Long): Observable<PaymentDBModel>
+  fun findPaymentObservable(personId: Long, expenseId: Long): Maybe<PaymentDBModel>
 
   @Query("SELECT * FROM Payment WHERE expenseId = :expenseId")
   fun findPayments(expenseId: Long): List<PaymentDBModel>
@@ -80,7 +80,7 @@ interface DatabaseDao {
   fun insert(person: PersonDBModel): Long
 
   @Insert
-  fun insertCompletable(person: PersonDBModel): Completable
+  fun insertRx(person: PersonDBModel): Single<Long>
 
   @Query("SELECT DISTINCT E.* FROM Expense AS E JOIN Payment AS P ON(E.id = P.expenseId)")
   fun observeExpenses(): Flowable<List<ExpenseDBModel>>
@@ -123,7 +123,7 @@ interface DatabaseDao {
   fun findReceiver(personId: Long, expenseId: Long): ReceiverDBModel?
 
   @Query("SELECT * FROM Receiver WHERE personId = :personId AND expenseId = :expenseId")
-  fun findReceiverObservable(personId: Long, expenseId: Long) : Single<ReceiverDBModel>
+  fun findReceiverObservable(personId: Long, expenseId: Long) : Maybe<ReceiverDBModel>
 
   @Query("SELECT * FROM Receiver WHERE expenseId = :expenseId")
   fun findReceivers(expenseId: Long): List<ReceiverDBModel>

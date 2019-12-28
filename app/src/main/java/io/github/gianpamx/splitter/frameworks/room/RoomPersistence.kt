@@ -27,8 +27,10 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
   override fun createPerson(person: Person) = databaseDao.insert(person.toPersonDBModel())
 
   override fun createPersonObservable(person: Person) = databaseDao
-      .insertCompletable(person.toPersonDBModel())
-      .andThen(Observable.just(person))
+      .insertRx(person.toPersonDBModel())
+      .map {
+        person.copy(id = it)
+      }.toObservable()
 
   override fun findPersons() = databaseDao.findPersons().map { it.toPerson() }
 
@@ -39,6 +41,7 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
     databaseDao
         .findPaymentObservable(person.id, expenseId)
         .map { it.toPayment(person) }
+        .toObservable()
 
   override fun findPayments(expenseId: Long) =
     databaseDao.findPayments(expenseId).map {
