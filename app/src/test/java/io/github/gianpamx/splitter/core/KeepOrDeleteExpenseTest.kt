@@ -1,8 +1,6 @@
 package io.github.gianpamx.splitter.core
 
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.github.gianpamx.splitter.core.entity.Expense
 import io.github.gianpamx.splitter.core.entity.Payment
@@ -10,6 +8,7 @@ import io.github.gianpamx.splitter.core.entity.Person
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before
 import org.junit.Test
@@ -29,14 +28,14 @@ class KeepOrDeleteExpenseTest {
 
   @Before fun setUp() {
     testObserver = TestObserver()
-    whenever(persistenceGateway.findExpenseObservable(any())).thenReturn(Maybe.just(Expense()))
+    whenever(persistenceGateway.findExpenseMaybe(any())).thenReturn(Maybe.just(Expense()))
 
     keepOrDeleteExpense = KeepOrDeleteExpense(persistenceGateway)
 
   }
 
   @Test fun `keep expense`() {
-    whenever(persistenceGateway.findReceiversObservable(any())).thenReturn(Observable.just(listOf(Person())))
+    whenever(persistenceGateway.findReceiversSingle(any())).thenReturn(Single.just(listOf(Person())))
     whenever(persistenceGateway.findPaymentsObservable(any())).thenReturn(Observable.just(listOf(Payment())))
 
     keepOrDeleteExpense(ANY_EXPENSE_ID).subscribe(testObserver)
@@ -46,7 +45,7 @@ class KeepOrDeleteExpenseTest {
 
   @Test
   fun `delete expense`() {
-    whenever(persistenceGateway.findReceiversObservable(any())).thenReturn(Observable.just(emptyList()))
+    whenever(persistenceGateway.findReceiversSingle(any())).thenReturn(Single.just(emptyList()))
     whenever(persistenceGateway.findPaymentsObservable(any())).thenReturn(Observable.just(emptyList()))
     whenever(persistenceGateway.deleteExpenseCompletable(any())).thenReturn(Completable.complete())
 

@@ -17,7 +17,6 @@ import io.github.gianpamx.splitter.frameworks.room.view.PayerDBView
 import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.internal.operators.flowable.FlowableJust
 import io.reactivex.observers.TestObserver
 import org.junit.Before
 import org.junit.Test
@@ -158,7 +157,7 @@ class RoomPersistenceTest {
   @Test fun findPaymentsObservable() {
     val testObserver = TestObserver<List<Payment>>()
     whenever(databaseDao.findPaymentsObservable(any()))
-        .thenReturn(Single.just(listOf(PaymentDBModel(expenseId = anyExpenseId, personId = anyPerson.id))))
+        .thenReturn(Observable.just(listOf(PaymentDBModel(expenseId = anyExpenseId, personId = anyPerson.id))))
     whenever(databaseDao.findPersonObservable(any())).thenReturn(Single.just(PersonDBModel(id = anyPerson.id)))
 
     roomPersistence.findPaymentsObservable(anyExpenseId).subscribe(testObserver)
@@ -168,12 +167,12 @@ class RoomPersistenceTest {
 
   @Test fun findReceiversObservable() {
     val testObserver = TestObserver<List<Person>>()
-    whenever(databaseDao.findReceiversObservable(any()))
+    whenever(databaseDao.findReceiversSingle(any()))
         .thenReturn(Single.just(listOf(ReceiverDBModel(personId = anyPerson.id))))
     whenever(databaseDao.findPersonObservable(any()))
         .thenReturn(Single.just(PersonDBModel(id = anyPerson.id)))
 
-    roomPersistence.findReceiversObservable(anyExpenseId).subscribe(testObserver)
+    roomPersistence.findReceiversSingle(anyExpenseId).subscribe(testObserver)
 
     testObserver.assertValue(listOf(anyPerson))
   }

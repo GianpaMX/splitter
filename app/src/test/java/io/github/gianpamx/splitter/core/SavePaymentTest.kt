@@ -42,7 +42,7 @@ class SavePaymentTest {
 
     savePayment(anyCents, anyPerson, anyExpenseId).subscribe(testObserver)
 
-    testObserver.assertValue(expectedPayment)
+    testObserver.assertComplete()
   }
 
   @Test fun `update existing payment`() {
@@ -51,7 +51,7 @@ class SavePaymentTest {
 
     savePayment(anyCents, anyPerson, anyExpenseId).subscribe(testObserver)
 
-    testObserver.assertValue(expectedPayment)
+    testObserver.assertComplete()
   }
 
   @Test fun `delete payment`() {

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import dagger.android.AndroidInjection
 import io.github.gianpamx.splitter.R
@@ -56,33 +55,39 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
   override fun onCreate(savedInstanceState: Bundle?) {
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
-    viewModel = ViewModelProviders.of(this, factory).get(ExpenseViewModel::class.java)
-    payersAdapter = PayersAdapter(currencyFormat)
-
     setContentView(R.layout.expense_activity)
     setSupportActionBar(toolbar)
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-    recyclerView.layoutManager = LinearLayoutManager(this)
+    viewModel = ViewModelProviders.of(this, factory).get(ExpenseViewModel::class.java)
+    payersAdapter = PayersAdapter(currencyFormat)
 
     expenseId = intent.getLongExtra(EXPENSE, 0L)
 
-    viewModel.loadExpense(expenseId)
-
-    viewModel.expense.observe(this, Observer {
-      it?.let { titleEditText.setText(it.title) }
-    })
-
-    if (savedInstanceState != null) {
-      selectedTab = savedInstanceState.getInt(SELECTED_TAB, PAYERS_TAB)
-      tabLayout.getTabAt(selectedTab)
-          ?.select()
+    if (savedInstanceState == null) {
+      viewModel.loadExpense(expenseId)
     }
-    onTabSelected(selectedTab)
 
-    tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
-    tabLayout.addOnTabSelectedListener(onTabSelectedListener)
+    setUpTabs(savedInstanceState)
+    setUpFAB()
 
+    payersAdapter.onPayerSelectedListener = ::showPayerDialog
+    receiversAdapter.onCheckedChangeListener = ::onSave
+    receiversAdapter.onLongClickListener = ::showReceiverDialog
+
+    viewModel.viewState.observe(this, Observer {
+      when (it) {
+        is ExpenseViewState.Ready -> {
+          titleEditText.setText(it.expense.title)
+          totalTextView.text = currencyFormat.format(it.total)
+          payersAdapter.replacePayers(it.payers)
+          receiversAdapter.replaceReceivers(it.receivers)
+        }
+      }
+    })
+  }
+
+  private fun setUpFAB() {
     floatingActionButton.setOnClickListener {
       if (selectedTab == PAYERS_TAB) {
         showPayerDialog(PayerModel())
@@ -90,23 +95,16 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
         showReceiverDialog(ReceiverModel(isChecked = true))
       }
     }
+  }
 
-    titleEditText.addTextChangedListener(expenseTitleWatcher)
-
-    viewModel.total.observe(this, Observer {
-      it?.let { totalTextView.text = currencyFormat.format(it) }
-    })
-
-    viewModel.payers.observe(this, Observer {
-      it?.let { payersAdapter.replacePayers(it) }
-    })
-    viewModel.receivers.observe(this, Observer {
-      it?.let { receiversAdapter.replaceReceivers(it) }
-    })
-
-    payersAdapter.onPayerSelectedListener = ::showPayerDialog
-    receiversAdapter.onCheckedChangeListener = ::onSave
-    receiversAdapter.onLongClickListener = ::showReceiverDialog
+  private fun setUpTabs(savedInstanceState: Bundle?) {
+    if (savedInstanceState != null) {
+      selectedTab = savedInstanceState.getInt(SELECTED_TAB, PAYERS_TAB)
+      tabLayout.getTabAt(selectedTab)?.select()
+    }
+    onTabSelected(selectedTab)
+    tabLayout.addOnTabSelectedListener(FabAnimator(floatingActionButton))
+    tabLayout.addOnTabSelectedListener(onTabSelectedListener)
   }
 
   override fun onSaveInstanceState(outState: Bundle?) {
@@ -129,20 +127,6 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
     }
   }
 
-  private val expenseTitleWatcher = object : TextWatcher {
-    override fun afterTextChanged(title: Editable?) {
-      viewModel.save(title.toString(), expenseId)
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-      // Do nothing
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-      // Do nothing
-    }
-  }
-
   private fun onTabSelected(position: Int) {
     selectedTab = position
     when (position) {
@@ -161,7 +145,7 @@ class ExpenseActivity : AppCompatActivity(), PayerDialog.Listener, ReceiverDialo
   }
 
   private fun exitExpense(exitFunction: (() -> Unit)? = null): Boolean {
-    viewModel.exitExpense(expenseId)
+    viewModel.exitExpense(expenseId, titleEditText.text.toString())
     exitFunction?.invoke()
     return true
   }

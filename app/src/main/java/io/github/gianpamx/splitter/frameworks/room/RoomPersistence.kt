@@ -14,6 +14,7 @@ import io.github.gianpamx.splitter.frameworks.room.view.ReceiverDBView
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Observables
+import kotlin.math.exp
 
 class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway {
   override fun updatePerson(person: Person) {
@@ -51,7 +52,7 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
   override fun findPaymentsObservable(expenseId: Long): Observable<List<Payment>> {
     val payments = databaseDao
         .findPaymentsObservable(expenseId)
-        .flatMapObservable {
+        .flatMap {
           Observable.fromIterable(it)
         }
         .publish()
@@ -136,7 +137,7 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
   override fun findExpense(expenseId: Long) =
     databaseDao.findExpense(expenseId)?.toExpense()
 
-  override fun findExpenseObservable(expenseId: Long) =
+  override fun findExpenseMaybe(expenseId: Long) =
     databaseDao
         .findExpenseObservable(expenseId)
         .map { it.toExpense() }
@@ -167,6 +168,9 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
       .flatMapCompletable {
         databaseDao.deleteExpenseCompletable(it)
       }
+
+  override fun observeExpense(expenseId: Long) =
+    databaseDao.observeExpense(expenseId).map { it.toExpense() }
 
   override fun observeReceivers(expenseId: Long, observer: (List<Pair<Person, Boolean>>) -> Unit) {
     databaseDao.observeReceivers(expenseId).subscribe {
@@ -199,8 +203,8 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
       databaseDao.findPerson(it.personId).toPerson()
     }
 
-  override fun findReceiversObservable(expenseId: Long) = databaseDao
-      .findReceiversObservable(expenseId)
+  override fun findReceiversSingle(expenseId: Long) = databaseDao
+      .findReceiversSingle(expenseId)
       .flatMap { receivers ->
         Observable
             .fromIterable(receivers)
@@ -210,7 +214,6 @@ class RoomPersistence(private val databaseDao: DatabaseDao) : PersistenceGateway
             .map { it.toPerson() }
             .toList()
       }
-      .toObservable()
 
   override fun createReceiver(personId: Long, expenseId: Long) {
     databaseDao.insert(ReceiverDBModel(expenseId = expenseId, personId = personId))

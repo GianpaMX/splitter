@@ -25,5 +25,5 @@ class SavePayment(private val persistenceGateway: PersistenceGateway) {
           .flatMap {
             persistenceGateway.updatePaymentObservable(payment)
           }
-    }
+    }.ignoreElements()
 }
