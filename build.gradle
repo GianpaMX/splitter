@@ -1,0 +1,70 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    apply from: './common.gradle'
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+            content {
+                includeModule("com.google.dagger", "hilt-android-gradle-plugin")
+            }
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath libraries.hilt.plugin
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    afterEvaluate { project ->
+        project.apply from: '../jacoco.gradle'
+    }
+}
+
+apply plugin: "jacoco"
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+task jacocoFullTestReport(type: JacocoReport) {
+    dependsOn "domain:jacocoTestReport", "app:jacocoTestReport"
+
+    sourceDirectories.from = files(
+            tasks.getByPath("domain:jacocoTestReport").sourceDirectories,
+            tasks.getByPath("app:jacocoTestReport").sourceDirectories
+    )
+    classDirectories.from = files(
+            tasks.getByPath("domain:jacocoTestReport").classDirectories,
+            tasks.getByPath("app:jacocoTestReport").classDirectories
+    )
+    executionData.from = files(
+            tasks.getByPath("domain:jacocoTestReport").executionData,
+            tasks.getByPath("app:jacocoTestReport").executionData
+    )
+    executionData.from = files(
+            tasks.getByPath("domain:jacocoTestReport").executionData,
+            tasks.getByPath("app:jacocoTestReport").executionData
+    )
+
+    reports {
+        csv.enabled false
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+project.ext {
+    CONFIG = { k -> "\"${project.properties.get(k)}\"" }
+}

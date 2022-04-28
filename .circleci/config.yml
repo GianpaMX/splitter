@@ -1,0 +1,36 @@
+jobs:
+  test:
+    executor: {name: android/android-machine, resource-class: large}
+    steps:
+    - checkout
+    - android/create-avd: {avd-name: myavd, install: true, system-image: system-images;android-29;default;x86}
+    - android/start-emulator: {
+      avd-name: myavd, 
+      no-window: true, 
+      restore-gradle-cache-prefix: v1a,
+      post-emulator-launch-assemble-command: ./gradlew --console=plain :app:assembleDebug :app:assembleAndroidTest
+    }
+    - android/run-tests: {test-command: ./gradlew --console=plain jacocoFullTestReport}
+    - android/save-gradle-cache: {cache-prefix: v1a}
+    - run:
+        name: Save test results
+        command: |
+          mkdir -p ~/test-results/junit/
+          find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+
+          mkdir -p ~/test-results/jacoco/
+          cp -r ./build/reports/jacoco/jacocoFullTestReport/html/ ~/test-results/jacoco/
+        when: always
+    - store_test_results:
+        path: ~/test-results
+    - store_artifacts:
+        path: ~/test-results
+    - run:
+        name: Publish code coverage
+        command: |
+          bash <(curl -s https://codecov.io/bash) -f ./build/reports/jacoco/jacocoFullTestReport/jacocoFullTestReport.xml
+orbs: {android: circleci/android@1.0}
+version: 2.1
+workflows:
+  test:
+    jobs: [test]

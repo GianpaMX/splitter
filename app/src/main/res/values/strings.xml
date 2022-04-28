@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Split better</string>
+    <string name="view_expenses_list_title">Expenses</string>
+    <string name="edit_expense_tab_payers_title">Who paid?</string>
+    <string name="edit_expense_tab_receivers_title">For whom?</string>
+    <string name="edit_expense_payer_dialog_title">Who paid and how much?</string>
+    <string name="edit_expense_payer_dialog_confirm_button">Save</string>
+    <string name="edit_expense_payer_dialog_dismiss_button">Cancel</string>
+    <string name="edit_expense_payer_dialog_name_label">Name</string>
+    <string name="edit_expense_payer_dialog_amount_label">Amount</string>
+</resources>

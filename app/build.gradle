@@ -1,0 +1,130 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+
+android {
+    compileSdkVersion sdk.compile
+
+    defaultConfig {
+        applicationId "io.github.gianpamx.splitbetter"
+        minSdkVersion sdk.min
+        targetSdkVersion sdk.target
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "io.github.gianpamx.CustomTestRunner"
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        useIR = true
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.time.ExperimentalTime',
+                "-Xuse-experimental=androidx.compose.material.ExperimentalMaterialApi",
+                "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
+                "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi",
+        ]
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+
+    packagingOptions {
+        exclude "DebugProbesKt.bin"
+        exclude "META-INF/**"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+
+    implementation project(':domain')
+
+    implementation libraries.kotlin.kotlin
+    implementation libraries.androidx.material
+    implementation libraries.androidx.appcompat
+    implementation libraries.androidx.ktx
+    implementation libraries.androidx.constraintLayout
+    implementation libraries.androidx.activityktx
+
+    implementation libraries.threetenabp
+    implementation libraries.timber
+
+    implementation libraries.hilt.android
+    kapt libraries.hilt.compiler
+    androidTestImplementation libraries.hilt.testing
+    kaptAndroidTest libraries.hilt.compiler
+
+    implementation libraries.navigation.fragment
+    implementation libraries.navigation.ui
+    androidTestImplementation libraries.navigation.testing
+
+    kapt libraries.lifecycle.compiler
+    implementation libraries.lifecycle.ktx
+    implementation libraries.lifecycle.livedata
+
+    implementation libraries.room.runtime
+    kapt libraries.room.compiler
+    implementation libraries.room.ktx
+    androidTestImplementation libraries.room.testing
+
+    implementation libraries.compose.ui
+    debugImplementation libraries.compose.uiTooling
+    implementation libraries.compose.uiTooling
+    implementation libraries.compose.foundation
+    implementation libraries.compose.material
+    implementation libraries.compose.materialIconsCore
+    implementation libraries.compose.materialIconsExtended
+    implementation libraries.compose.activity
+    implementation libraries.compose.livedata
+    implementation libraries.compose.livecycle
+    implementation libraries.compose.themeAdapter
+    implementation libraries.compose.constraintlayout
+
+    implementation libraries.accompanist.systemuicontroller
+    implementation libraries.accompanist.insets
+    implementation libraries.accompanist.insetsui
+    implementation libraries.accompanist.pager
+    implementation libraries.accompanist.pagerIndicators
+
+    androidTestImplementation libraries.compose.testing
+
+    testImplementation libraries.testing.junit
+    testImplementation libraries.testing.assertj
+    testImplementation libraries.testing.mockitoKotlin2
+    testImplementation libraries.testing.turbine
+    testImplementation libraries.androidx.testing
+    testImplementation libraries.kotlin.test
+
+    androidTestImplementation libraries.testing.runner
+
+    androidTestImplementation libraries.testing.androidjunitx
+    androidTestImplementation libraries.testing.androidjunitktx
+    androidTestImplementation libraries.testing.corektx
+    androidTestImplementation libraries.testing.espresso
+    debugImplementation libraries.testing.fragments
+}
